@@ -85,6 +85,7 @@ def main():
         Return img: HWC, BGR, [0,1], numpy
         '''
         img_GT = cv2.imread(img_path)
+        img_GT = cv2.resize(img_GT, (1/4, 1/4))
         img = img_GT.astype(np.float32) / 255.
         return img
 
