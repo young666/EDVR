@@ -167,16 +167,16 @@ def main():
         #### read LR images
         imgs = read_seq_imgs(sub_folder)
         #### read GT images
-        img_GT_l = []
-        if data_mode == 'Vid4':
-            sub_folder_GT = osp.join(sub_folder.replace('/BIx4/', '/GT/'), '*')
-        else:
-            sub_folder_GT = osp.join(sub_folder.replace('/{}/'.format(data_mode), '/GT/'), '*')
-        for img_GT_path in sorted(glob.glob(sub_folder_GT)):
-            img_GT_l.append(read_image(img_GT_path))
+        # img_GT_l = []
+        # if data_mode == 'Vid4':
+        #     sub_folder_GT = osp.join(sub_folder.replace('/BIx4/', '/GT/'), '*')
+        # else:
+        #     sub_folder_GT = osp.join(sub_folder.replace('/{}/'.format(data_mode), '/GT/'), '*')
+        # for img_GT_path in sorted(glob.glob(sub_folder_GT)):
+        #     img_GT_l.append(read_image(img_GT_path))
 
-        avg_psnr, avg_psnr_border, avg_psnr_center = 0, 0, 0
-        cal_n_border, cal_n_center = 0, 0
+        # avg_psnr, avg_psnr_border, avg_psnr_center = 0, 0, 0
+        # cal_n_border, cal_n_center = 0, 0
 
         # process each image
         for img_idx, img_path in enumerate(img_path_l):
@@ -213,45 +213,45 @@ def main():
                 cv2.imwrite(osp.join(save_sub_folder, '{:08d}.png'.format(c_idx)), output)
 
             #### calculate PSNR
-            output = output / 255.
-            GT = np.copy(img_GT_l[img_idx])
-            # For REDS, evaluate on RGB channels; for Vid4, evaluate on Y channels
-            if data_mode == 'Vid4':  # bgr2y, [0, 1]
-                GT = data_util.bgr2ycbcr(GT)
-                output = data_util.bgr2ycbcr(output)
-            if crop_border == 0:
-                cropped_output = output
-                cropped_GT = GT
-            else:
-                cropped_output = output[crop_border:-crop_border, crop_border:-crop_border]
-                cropped_GT = GT[crop_border:-crop_border, crop_border:-crop_border]
-            crt_psnr = util.calculate_psnr(cropped_output * 255, cropped_GT * 255)
-            logger.info('{:3d} - {:25}.png \tPSNR: {:.6f} dB'.format(img_idx + 1, c_idx, crt_psnr))
+            # output = output / 255.
+            # GT = np.copy(img_GT_l[img_idx])
+            # # For REDS, evaluate on RGB channels; for Vid4, evaluate on Y channels
+            # if data_mode == 'Vid4':  # bgr2y, [0, 1]
+            #     GT = data_util.bgr2ycbcr(GT)
+            #     output = data_util.bgr2ycbcr(output)
+            # if crop_border == 0:
+            #     cropped_output = output
+            #     cropped_GT = GT
+            # else:
+            #     cropped_output = output[crop_border:-crop_border, crop_border:-crop_border]
+            #     cropped_GT = GT[crop_border:-crop_border, crop_border:-crop_border]
+            # crt_psnr = util.calculate_psnr(cropped_output * 255, cropped_GT * 255)
+            # logger.info('{:3d} - {:25}.png \tPSNR: {:.6f} dB'.format(img_idx + 1, c_idx, crt_psnr))
 
-            if img_idx >= border_frame and img_idx < max_idx - border_frame:  # center frames
-                avg_psnr_center += crt_psnr
-                cal_n_center += 1
-            else:  # border frames
-                avg_psnr_border += crt_psnr
-                cal_n_border += 1
+            # if img_idx >= border_frame and img_idx < max_idx - border_frame:  # center frames
+            #     avg_psnr_center += crt_psnr
+            #     cal_n_center += 1
+            # else:  # border frames
+            #     avg_psnr_border += crt_psnr
+            #     cal_n_border += 1
 
-        avg_psnr = (avg_psnr_center + avg_psnr_border) / (cal_n_center + cal_n_border)
-        avg_psnr_center = avg_psnr_center / cal_n_center
-        if cal_n_border == 0:
-            avg_psnr_border = 0
-        else:
-            avg_psnr_border = avg_psnr_border / cal_n_border
+        # avg_psnr = (avg_psnr_center + avg_psnr_border) / (cal_n_center + cal_n_border)
+        # avg_psnr_center = avg_psnr_center / cal_n_center
+        # if cal_n_border == 0:
+        #     avg_psnr_border = 0
+        # else:
+        #     avg_psnr_border = avg_psnr_border / cal_n_border
 
-        logger.info('Folder {} - Average PSNR: {:.6f} dB for {} frames; '
-                    'Center PSNR: {:.6f} dB for {} frames; '
-                    'Border PSNR: {:.6f} dB for {} frames.'.format(sub_folder_name, avg_psnr,
-                                                                   (cal_n_center + cal_n_border),
-                                                                   avg_psnr_center, cal_n_center,
-                                                                   avg_psnr_border, cal_n_border))
+        # logger.info('Folder {} - Average PSNR: {:.6f} dB for {} frames; '
+        #             'Center PSNR: {:.6f} dB for {} frames; '
+        #             'Border PSNR: {:.6f} dB for {} frames.'.format(sub_folder_name, avg_psnr,
+        #                                                            (cal_n_center + cal_n_border),
+        #                                                            avg_psnr_center, cal_n_center,
+        #                                                            avg_psnr_border, cal_n_border))
 
-        avg_psnr_l.append(avg_psnr)
-        avg_psnr_center_l.append(avg_psnr_center)
-        avg_psnr_border_l.append(avg_psnr_border)
+        # avg_psnr_l.append(avg_psnr)
+        # avg_psnr_center_l.append(avg_psnr_center)
+        # avg_psnr_border_l.append(avg_psnr_border)
 
     logger.info('################ Tidy Outputs ################')
     for name, psnr, psnr_center, psnr_border in zip(sub_folder_name_l, avg_psnr_l,
