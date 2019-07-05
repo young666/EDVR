@@ -28,7 +28,7 @@ def main():
 
     #### model
     if data_mode == 'Vid4':
-        model_path = '../experiments/pretrained_models/EDVR_Vimeo90K_SR_L.pth.pth'
+        model_path = '../experiments/pretrained_models/EDVR_Vimeo90K_SR_L.pth'
     elif data_mode == 'sharp_bicubic':
         model_path = '../experiments/pretrained_models/EDVR_REDS_SR_L.pth'
     elif data_mode == 'blur_bicubic':
