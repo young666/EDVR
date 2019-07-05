@@ -86,12 +86,12 @@ def main():
         '''
         img_GT = cv2.imread(img_path)
 
-        scale = 1 / 4
-        width = int(img_GT.shape[1] * scale)
-        height = int(img_GT.shape[0] * scale)
-        dim = (width, height)
+        # scale = 1 / 4
+        # width = int(img_GT.shape[1] * scale)
+        # height = int(img_GT.shape[0] * scale)
+        # dim = (width, height)
 
-        img_GT = cv2.resize(img_GT, dim)
+        # img_GT = cv2.resize(img_GT, dim)
         img = img_GT.astype(np.float32) / 255.
         return img
 
