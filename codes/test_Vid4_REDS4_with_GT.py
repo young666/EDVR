@@ -52,7 +52,7 @@ def main():
 
     #### dataset
     if data_mode == 'Vid4':
-        test_dataset_folder = '../datasets/kios8/*'
+        test_dataset_folder = '../datasets/kios8/BIx4/*'
     else:
         test_dataset_folder = '../datasets/REDS4/{}/*'.format(data_mode)
 
