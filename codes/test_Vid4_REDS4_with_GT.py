@@ -58,8 +58,8 @@ def main():
 
     #### evaluation
     flip_test = False
-    crop_border = 0
-    border_frame = N_in // 2  # border frames when evaluate
+    # crop_border = 0
+    # border_frame = N_in // 2  # border frames when evaluate
     # temporal padding mode
     if data_mode == 'Vid4' or data_mode == 'sharp_bicubic':
         padding = 'new_info'
@@ -165,6 +165,7 @@ def main():
             util.mkdirs(save_sub_folder)
 
         #### read LR images
+        print(sub_folder)
         imgs = read_seq_imgs(sub_folder)
         #### read GT images
         # img_GT_l = []
