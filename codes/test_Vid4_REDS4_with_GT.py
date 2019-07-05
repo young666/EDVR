@@ -91,6 +91,7 @@ def main():
     def read_seq_imgs(img_seq_path):
         '''read a sequence of images'''
         img_path_l = sorted(glob.glob(img_seq_path + '/*'))
+        print(img_path_l)
         img_l = [read_image(v) for v in img_path_l]
         # stack to TCHW, RGB, [0,1], torch
         imgs = np.stack(img_l, axis=0)
@@ -165,7 +166,6 @@ def main():
             util.mkdirs(save_sub_folder)
 
         #### read LR images
-        print(sub_folder)
         imgs = read_seq_imgs(sub_folder)
         #### read GT images
         # img_GT_l = []
