@@ -98,7 +98,6 @@ def main():
     def read_seq_imgs(img_seq_path):
         '''read a sequence of images'''
         img_path_l = sorted(glob.glob(img_seq_path + '/*'))
-        print(img_path_l)
         img_l = [read_image(v) for v in img_path_l]
         # stack to TCHW, RGB, [0,1], torch
         imgs = np.stack(img_l, axis=0)
@@ -273,11 +272,11 @@ def main():
     logger.info('Model path: {}'.format(model_path))
     logger.info('Save images: {}'.format(save_imgs))
     logger.info('Flip Test: {}'.format(flip_test))
-    logger.info('Total Average PSNR: {:.6f} dB for {} clips. '
-                'Center PSNR: {:.6f} dB. Border PSNR: {:.6f} dB.'.format(
-                    sum(avg_psnr_l) / len(avg_psnr_l), len(sub_folder_l),
-                    sum(avg_psnr_center_l) / len(avg_psnr_center_l),
-                    sum(avg_psnr_border_l) / len(avg_psnr_border_l)))
+    # logger.info('Total Average PSNR: {:.6f} dB for {} clips. '
+    #             'Center PSNR: {:.6f} dB. Border PSNR: {:.6f} dB.'.format(
+    #                 sum(avg_psnr_l) / len(avg_psnr_l), len(sub_folder_l),
+    #                 sum(avg_psnr_center_l) / len(avg_psnr_center_l),
+    #                 sum(avg_psnr_border_l) / len(avg_psnr_border_l)))
 
 
 if __name__ == '__main__':
