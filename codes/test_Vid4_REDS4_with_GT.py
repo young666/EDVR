@@ -1,7 +1,7 @@
-'''
+"""
 test Vid4 (SR) and REDS4 (SR-clean, SR-blur, deblur-clean, deblur-compression) datasets
 write to txt log file
-'''
+"""
 
 import os
 import os.path as osp
@@ -12,6 +12,7 @@ import cv2
 import torch
 
 import utils.util as util
+
 # import data.util as data_util
 import models.modules.EDVR_arch as EDVR_arch
 
@@ -20,70 +21,72 @@ def main():
     #################
     # configurations
     #################
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-    data_mode = 'blur_bicubic'  # Vid4 | sharp_bicubic | blur_bicubic | blur | blur_comp
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    data_mode = "blur_bicubic"  # Vid4 | sharp_bicubic | blur_bicubic | blur | blur_comp
     # Vid4: SR
     # REDS4: sharp_bicubic (SR-clean), blur_bicubic (SR-blur);
     #        blur (deblur-clean), blur_comp (deblur-compression).
 
     #### model
-    if data_mode == 'Vid4':
-        model_path = '../experiments/pretrained_models/EDVR_Vimeo90K_SR_L.pth'
-    elif data_mode == 'sharp_bicubic':
-        model_path = '../experiments/pretrained_models/EDVR_REDS_SR_L.pth'
-    elif data_mode == 'blur_bicubic':
-        model_path = '../experiments/pretrained_models/EDVR_REDS_SRblur_L.pth'
-    elif data_mode == 'blur':
-        model_path = '../experiments/pretrained_models/EDVR_REDS_deblur_L.pth'
-    elif data_mode == 'blur_comp':
-        model_path = '../experiments/pretrained_models/EDVR_REDS_deblurcomp_L.pth'
+    if data_mode == "Vid4":
+        model_path = "../experiments/pretrained_models/EDVR_Vimeo90K_SR_L.pth"
+    elif data_mode == "sharp_bicubic":
+        model_path = "../experiments/pretrained_models/EDVR_REDS_SR_L.pth"
+    elif data_mode == "blur_bicubic":
+        model_path = "../experiments/pretrained_models/EDVR_REDS_SRblur_L.pth"
+    elif data_mode == "blur":
+        model_path = "../experiments/pretrained_models/EDVR_REDS_deblur_L.pth"
+    elif data_mode == "blur_comp":
+        model_path = "../experiments/pretrained_models/EDVR_REDS_deblurcomp_L.pth"
     else:
         raise NotImplementedError
-    if data_mode == 'Vid4':
+    if data_mode == "Vid4":
         N_in = 7  # use N_in images to restore one HR image
     else:
         N_in = 5
     predeblur, HR_in = False, False
-    if data_mode == 'blur_bicubic':
+    if data_mode == "blur_bicubic":
         predeblur = True
-    if data_mode == 'blur' or data_mode == 'blur_comp':
+    if data_mode == "blur" or data_mode == "blur_comp":
         predeblur, HR_in = True, True
     model = EDVR_arch.EDVR(128, N_in, 8, 5, 40, predeblur=predeblur, HR_in=HR_in)
 
     #### dataset
-    if data_mode == 'Vid4':
-        test_dataset_folder = '../datasets/kios8/BIx4/*'
+    if data_mode == "Vid4":
+        test_dataset_folder = "../datasets/kios8/BIx4/*"
     else:
-        test_dataset_folder = '../datasets/REDS4/{}/*'.format(data_mode)
+        test_dataset_folder = "../datasets/REDS4/{}/*".format(data_mode)
 
     #### evaluation
     flip_test = False
     # crop_border = 0
     # border_frame = N_in // 2  # border frames when evaluate
     # temporal padding mode
-    if data_mode == 'Vid4' or data_mode == 'sharp_bicubic':
-        padding = 'new_info'
+    if data_mode == "Vid4" or data_mode == "sharp_bicubic":
+        padding = "new_info"
     else:
-        padding = 'replicate'
+        padding = "replicate"
     save_imgs = True
     ############################################################################
-    device = torch.device('cuda')
-    save_folder = '../results/{}'.format(data_mode)
+    device = torch.device("cuda")
+    save_folder = "../results/{}".format(data_mode)
     util.mkdirs(save_folder)
-    util.setup_logger('base', save_folder, 'test', level=logging.INFO, screen=True, tofile=True)
-    logger = logging.getLogger('base')
+    util.setup_logger(
+        "base", save_folder, "test", level=logging.INFO, screen=True, tofile=True
+    )
+    logger = logging.getLogger("base")
 
     #### log info
-    logger.info('Data: {} - {}'.format(data_mode, test_dataset_folder))
-    logger.info('Padding mode: {}'.format(padding))
-    logger.info('Model path: {}'.format(model_path))
-    logger.info('Save images: {}'.format(save_imgs))
-    logger.info('Flip Test: {}'.format(flip_test))
+    logger.info("Data: {} - {}".format(data_mode, test_dataset_folder))
+    logger.info("Padding mode: {}".format(padding))
+    logger.info("Model path: {}".format(model_path))
+    logger.info("Save images: {}".format(save_imgs))
+    logger.info("Flip Test: {}".format(flip_test))
 
     def read_image(img_path):
-        '''read one image from img_path
+        """read one image from img_path
         Return img: HWC, BGR, [0,1], numpy
-        '''
+        """
         img_GT = cv2.imread(img_path)
 
         # scale = 1 / 4
@@ -92,50 +95,52 @@ def main():
         # dim = (width, height)
 
         # img_GT = cv2.resize(img_GT, dim)
-        img = img_GT.astype(np.float32) / 255.
+        img = img_GT.astype(np.float32) / 255.0
         return img
 
     def read_seq_imgs(img_seq_path):
-        '''read a sequence of images'''
-        img_path_l = sorted(glob.glob(img_seq_path + '/*'))
+        """read a sequence of images"""
+        img_path_l = sorted(glob.glob(img_seq_path + "/*"))
         img_l = [read_image(v) for v in img_path_l]
         # stack to TCHW, RGB, [0,1], torch
         imgs = np.stack(img_l, axis=0)
         imgs = imgs[:, :, :, [2, 1, 0]]
-        imgs = torch.from_numpy(np.ascontiguousarray(np.transpose(imgs, (0, 3, 1, 2)))).float()
+        imgs = torch.from_numpy(
+            np.ascontiguousarray(np.transpose(imgs, (0, 3, 1, 2)))
+        ).float()
         return imgs
 
-    def index_generation(crt_i, max_n, N, padding='reflection'):
-        '''
+    def index_generation(crt_i, max_n, N, padding="reflection"):
+        """
         padding: replicate | reflection | new_info | circle
-        '''
+        """
         max_n = max_n - 1
         n_pad = N // 2
         return_l = []
 
         for i in range(crt_i - n_pad, crt_i + n_pad + 1):
             if i < 0:
-                if padding == 'replicate':
+                if padding == "replicate":
                     add_idx = 0
-                elif padding == 'reflection':
+                elif padding == "reflection":
                     add_idx = -i
-                elif padding == 'new_info':
+                elif padding == "new_info":
                     add_idx = (crt_i + n_pad) + (-i)
-                elif padding == 'circle':
+                elif padding == "circle":
                     add_idx = N + i
                 else:
-                    raise ValueError('Wrong padding mode')
+                    raise ValueError("Wrong padding mode")
             elif i > max_n:
-                if padding == 'replicate':
+                if padding == "replicate":
                     add_idx = max_n
-                elif padding == 'reflection':
+                elif padding == "reflection":
                     add_idx = max_n * 2 - i
-                elif padding == 'new_info':
+                elif padding == "new_info":
                     add_idx = (crt_i - n_pad) - (i - max_n)
-                elif padding == 'circle':
+                elif padding == "circle":
                     add_idx = i - N
                 else:
-                    raise ValueError('Wrong padding mode')
+                    raise ValueError("Wrong padding mode")
             else:
                 add_idx = i
             return_l.append(add_idx)
@@ -159,13 +164,15 @@ def main():
     avg_psnr_l, avg_psnr_center_l, avg_psnr_border_l = [], [], []
     sub_folder_name_l = []
 
+    logger.info("Starting handling images")
+
     # for each sub-folder
     for sub_folder in sub_folder_l:
-        sub_folder_name = sub_folder.split('/')[-1]
+        sub_folder_name = sub_folder.split("/")[-1]
         sub_folder_name_l.append(sub_folder_name)
         save_sub_folder = osp.join(save_folder, sub_folder_name)
 
-        img_path_l = sorted(glob.glob(sub_folder + '/*'))
+        img_path_l = sorted(glob.glob(sub_folder + "/*"))
         max_idx = len(img_path_l)
 
         if save_imgs:
@@ -190,19 +197,23 @@ def main():
             c_idx = int(osp.splitext(osp.basename(img_path))[0])
             select_idx = index_generation(c_idx, max_idx, N_in, padding=padding)
             # get input images
-            imgs_in = imgs.index_select(0, torch.LongTensor(select_idx)).unsqueeze(0).to(device)
+            imgs_in = (
+                imgs.index_select(0, torch.LongTensor(select_idx))
+                .unsqueeze(0)
+                .to(device)
+            )
             output = single_forward(model, imgs_in)
             output_f = output.data.float().cpu().squeeze(0)
 
             if flip_test:
                 # flip W
-                output = single_forward(model, torch.flip(imgs_in, (-1, )))
-                output = torch.flip(output, (-1, ))
+                output = single_forward(model, torch.flip(imgs_in, (-1,)))
+                output = torch.flip(output, (-1,))
                 output = output.data.float().cpu().squeeze(0)
                 output_f = output_f + output
                 # flip H
-                output = single_forward(model, torch.flip(imgs_in, (-2, )))
-                output = torch.flip(output, (-2, ))
+                output = single_forward(model, torch.flip(imgs_in, (-2,)))
+                output = torch.flip(output, (-2,))
                 output = output.data.float().cpu().squeeze(0)
                 output_f = output_f + output
                 # flip both H and W
@@ -217,25 +228,37 @@ def main():
 
             # save imgs
             if save_imgs:
-                cv2.imwrite(osp.join(save_sub_folder, '{:08d}.png'.format(c_idx)), output)
+                cv2.imwrite(
+                    osp.join(save_sub_folder, "{:08d}.png".format(c_idx)), output
+                )
+
+            logger.info("{:3d} - {:25}.png".format(img_idx + 1, c_idx))
 
             #### calculate PSNR
-            # output = output / 255.
+            # output = output / 255.0
             # GT = np.copy(img_GT_l[img_idx])
             # # For REDS, evaluate on RGB channels; for Vid4, evaluate on Y channels
-            # if data_mode == 'Vid4':  # bgr2y, [0, 1]
+            # if data_mode == "Vid4":  # bgr2y, [0, 1]
             #     GT = data_util.bgr2ycbcr(GT)
             #     output = data_util.bgr2ycbcr(output)
             # if crop_border == 0:
             #     cropped_output = output
             #     cropped_GT = GT
             # else:
-            #     cropped_output = output[crop_border:-crop_border, crop_border:-crop_border]
+            #     cropped_output = output[
+            #         crop_border:-crop_border, crop_border:-crop_border
+            #     ]
             #     cropped_GT = GT[crop_border:-crop_border, crop_border:-crop_border]
             # crt_psnr = util.calculate_psnr(cropped_output * 255, cropped_GT * 255)
-            # logger.info('{:3d} - {:25}.png \tPSNR: {:.6f} dB'.format(img_idx + 1, c_idx, crt_psnr))
+            # logger.info(
+            #     "{:3d} - {:25}.png \tPSNR: {:.6f} dB".format(
+            #         img_idx + 1, c_idx, crt_psnr
+            #     )
+            # )
 
-            # if img_idx >= border_frame and img_idx < max_idx - border_frame:  # center frames
+            # if (
+            #     img_idx >= border_frame and img_idx < max_idx - border_frame
+            # ):  # center frames
             #     avg_psnr_center += crt_psnr
             #     cal_n_center += 1
             # else:  # border frames
@@ -260,18 +283,21 @@ def main():
         # avg_psnr_center_l.append(avg_psnr_center)
         # avg_psnr_border_l.append(avg_psnr_border)
 
-    logger.info('################ Tidy Outputs ################')
-    for name, psnr, psnr_center, psnr_border in zip(sub_folder_name_l, avg_psnr_l,
-                                                    avg_psnr_center_l, avg_psnr_border_l):
-        logger.info('Folder {} - Average PSNR: {:.6f} dB. '
-                    'Center PSNR: {:.6f} dB. '
-                    'Border PSNR: {:.6f} dB.'.format(name, psnr, psnr_center, psnr_border))
-    logger.info('################ Final Results ################')
-    logger.info('Data: {} - {}'.format(data_mode, test_dataset_folder))
-    logger.info('Padding mode: {}'.format(padding))
-    logger.info('Model path: {}'.format(model_path))
-    logger.info('Save images: {}'.format(save_imgs))
-    logger.info('Flip Test: {}'.format(flip_test))
+    logger.info("################ Tidy Outputs ################")
+    for name, psnr, psnr_center, psnr_border in zip(
+        sub_folder_name_l, avg_psnr_l, avg_psnr_center_l, avg_psnr_border_l
+    ):
+        logger.info(
+            "Folder {} - Average PSNR: {:.6f} dB. "
+            "Center PSNR: {:.6f} dB. "
+            "Border PSNR: {:.6f} dB.".format(name, psnr, psnr_center, psnr_border)
+        )
+    logger.info("################ Final Results ################")
+    logger.info("Data: {} - {}".format(data_mode, test_dataset_folder))
+    logger.info("Padding mode: {}".format(padding))
+    logger.info("Model path: {}".format(model_path))
+    logger.info("Save images: {}".format(save_imgs))
+    logger.info("Flip Test: {}".format(flip_test))
     # logger.info('Total Average PSNR: {:.6f} dB for {} clips. '
     #             'Center PSNR: {:.6f} dB. Border PSNR: {:.6f} dB.'.format(
     #                 sum(avg_psnr_l) / len(avg_psnr_l), len(sub_folder_l),
@@ -279,5 +305,5 @@ def main():
     #                 sum(avg_psnr_border_l) / len(avg_psnr_border_l)))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
