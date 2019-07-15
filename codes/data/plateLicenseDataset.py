@@ -24,7 +24,10 @@ logger = logging.getLogger("base")
 class PlateLicenseDataset(data.Dataset):
     """
     Reading the training PlateLicenseDataset dataset
-    key example: 0258_0_000056
+    key example: XXXX_X_Y_ZZZZZZ,
+    X: Directory
+    Y: Total number of images
+    Z: Image name
     GT: Ground-Truth;
     LQ: Low-Quality, e.g., low-resolution/blurry/noisy/compressed frames
     support reading N LQ frames, N = 1, 3, 5, 7
@@ -57,12 +60,12 @@ class PlateLicenseDataset(data.Dataset):
         logger.info("Using cache keys - {}.".format(cache_keys))
         self.paths_GT = pickle.load(open("./data/{}".format(cache_keys), "rb"))
         # remove the REDS4 for testing
-        self.paths_GT = [
-            v
-            for v in self.paths_GT
-            if v.split("_")[0] not in ["000", "011", "015", "020"]
-        ]
-        assert self.paths_GT, "Error: GT path is empty."
+#         self.paths_GT = [
+#             v
+#             for v in self.paths_GT
+#             if v.split("_")[0] not in ["000", "011", "015", "020"]
+#         ]
+#         assert self.paths_GT, "Error: GT path is empty."
 
         if self.data_type == "lmdb":
             self.GT_env, self.LQ_env = None, None
