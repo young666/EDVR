@@ -157,7 +157,7 @@ class PlateLicenseDataset(data.Dataset):
                         -interval,
                     )
                 )
-            name_b = "{:08d}".format(neighbor_list[0])
+            name_b = "{:06d}".format(neighbor_list[0])
         else:
             # ensure not exceeding the borders
             while (center_frame_idx + self.half_N_frames * interval > 99) or (
@@ -174,7 +174,7 @@ class PlateLicenseDataset(data.Dataset):
             )
             if self.random_reverse and random.random() < 0.5:
                 neighbor_list.reverse()
-            name_b = "{:08d}".format(neighbor_list[self.half_N_frames])
+            name_b = "{:06d}".format(neighbor_list[self.half_N_frames])
 
         assert (
             len(neighbor_list) == self.opt["N_frames"]
@@ -195,18 +195,18 @@ class PlateLicenseDataset(data.Dataset):
         LQ_size_tuple = (3, 70, 75) if self.LR_input else (3, 280, 300)
         img_LQ_l = []
         for v in neighbor_list:
-            img_LQ_path = osp.join(self.LQ_root, name_a, "{:08d}.png".format(v))
+            img_LQ_path = osp.join(self.LQ_root, name_a, "{:06d}.png".format(v))
             if self.data_type == "mc":
                 if self.LR_input:
                     img_LQ = self._read_img_mc(img_LQ_path)
                 else:
                     img_LQ = self._read_img_mc_BGR(
-                        self.LQ_root, name_a, "{:08d}".format(v)
+                        self.LQ_root, name_a, "{:06d}".format(v)
                     )
                 img_LQ = img_LQ.astype(np.float32) / 255.0
             elif self.data_type == "lmdb":
                 img_LQ = util.read_img(
-                    self.LQ_env, "{}_{:08d}".format(name_a, v), LQ_size_tuple
+                    self.LQ_env, "{}_{:06d}".format(name_a, v), LQ_size_tuple
                 )
             else:
                 img_LQ = util.read_img(None, img_LQ_path)
