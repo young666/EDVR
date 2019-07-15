@@ -163,6 +163,7 @@ def main():
     assert train_loader is not None
 
     #### create model
+    model_path = opt['path']['pretrain_model_G']
     model = create_model(opt)
 
     #### resume training

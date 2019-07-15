@@ -42,7 +42,7 @@ network_G:
 
 #### path
 path:
-  pretrain_model_G: ../experiments/001_EDVRwoTSA_scratch_lr4e-4_600k_REDS_LrCAR4S/models/600000_G.pth
+  pretrain_model_G: ../experiments/pretrained_models/EDVR_REDS_SRblur_L.pth
   strict_load: false
   resume_state: ~
 
