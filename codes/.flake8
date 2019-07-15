@@ -2,5 +2,7 @@
 ignore =
     # Too many leading '#' for block comment (E266)
     E266
+    # whitespace before ':'
+    E203
 
 max-line-length=100

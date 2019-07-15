@@ -11,7 +11,7 @@ import cv2
 import lmdb
 import torch
 import torch.utils.data as data
-import codes.data.util as util
+import data.util as util
 
 try:
     import mc  # import memcached
@@ -21,17 +21,17 @@ except ImportError:
 logger = logging.getLogger("base")
 
 
-class REDSDataset(data.Dataset):
+class PlateLicenseDataset(data.Dataset):
     """
-    Reading the training REDS dataset
-    key example: 000_00000000
+    Reading the training PlateLicenseDataset dataset
+    key example: 0258_0_000056
     GT: Ground-Truth;
     LQ: Low-Quality, e.g., low-resolution/blurry/noisy/compressed frames
     support reading N LQ frames, N = 1, 3, 5, 7
     """
 
     def __init__(self, opt):
-        super(REDSDataset, self).__init__()
+        super(PlateLicenseDataset, self).__init__()
         self.opt = opt
         # temporal augmentation
         self.interval_list = opt["interval_list"]
@@ -126,7 +126,7 @@ class REDSDataset(data.Dataset):
         scale = self.opt["scale"]
         GT_size = self.opt["GT_size"]
         key = self.paths_GT[index]
-        name_a, name_b = key.split("_")
+        name_a, name_b = key.rsplit("_", 1)
         center_frame_idx = int(name_b)
 
         #### determine the neighbor frames

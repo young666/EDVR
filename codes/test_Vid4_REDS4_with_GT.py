@@ -182,10 +182,12 @@ def main():
         imgs = read_seq_imgs(sub_folder)
         #### read GT images
         # img_GT_l = []
-        # if data_mode == 'Vid4':
-        #     sub_folder_GT = osp.join(sub_folder.replace('/BIx4/', '/GT/'), '*')
+        # if data_mode == "Vid4":
+        #     sub_folder_GT = osp.join(sub_folder.replace("/BIx4/", "/GT/"), "*")
         # else:
-        #     sub_folder_GT = osp.join(sub_folder.replace('/{}/'.format(data_mode), '/GT/'), '*')
+        #     sub_folder_GT = osp.join(
+        #         sub_folder.replace("/{}/".format(data_mode), "/GT/"), "*"
+        #     )
         # for img_GT_path in sorted(glob.glob(sub_folder_GT)):
         #     img_GT_l.append(read_image(img_GT_path))
 
