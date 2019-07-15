@@ -185,14 +185,14 @@ class PlateLicenseDataset(data.Dataset):
             img_GT = self._read_img_mc_BGR(self.GT_root, name_a, name_b)
             img_GT = img_GT.astype(np.float32) / 255.0
         elif self.data_type == "lmdb":
-            img_GT = util.read_img(self.GT_env, key, (3, 720, 1280))
+            img_GT = util.read_img(self.GT_env, key, (3, 280, 300))
         else:
             img_GT = util.read_img(
                 None, osp.join(self.GT_root, name_a, name_b + ".png")
             )
 
         #### get LQ images
-        LQ_size_tuple = (3, 70, 75) if self.LR_input else (3, 720, 1280)
+        LQ_size_tuple = (3, 70, 75) if self.LR_input else (3, 280, 300)
         img_LQ_l = []
         for v in neighbor_list:
             img_LQ_path = osp.join(self.LQ_root, name_a, "{:08d}.png".format(v))
