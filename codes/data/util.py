@@ -57,6 +57,7 @@ def get_image_paths(data_type, dataroot):
 def _read_img_lmdb(env, key, size):
     '''read image from lmdb with key (w/ and w/o fixed size)
     size: (C, H, W) tuple'''
+    print(key)
     with env.begin(write=False) as txn:
         buf = txn.get(key.encode('ascii'))
     img_flat = np.frombuffer(buf, dtype=np.uint8)
