@@ -1,22 +1,22 @@
 #### general settings
-name: 002_EDVR_EDVRwoTSAIni_lr4e-4_600k_REDS_LrCAR4S_fixTSA50k
+name: 002_EDVR_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
 use_tb_logger: true
 model: VideoSR_base
 distortion: sr
 scale: 4
-gpu_ids: [0,1,2,3,4,5,6,7]
+gpu_ids: [0]
 
 #### datasets
 datasets:
   train:
-    name: REDS
-    mode: REDS
+    name: licensePlate
+    mode: licensePlate
     interval_list: [1]
     random_reverse: false
     border_mode: false
     dataroot_GT: /workspace/video_sr/EDVR/datasets/license_plate/license_plate.lmdb
     dataroot_LQ: /workspace/video_sr/EDVR/datasets/license_plate/license_plate_bicubic_blur_x4.lmdb
-    cache_keys: REDS_trainval_keys.pkl
+    cache_keys: LicensePlate_trainval_keys.pkl
 
     N_frames: 5
     use_shuffle: true
@@ -42,7 +42,7 @@ network_G:
 
 #### path
 path:
-  pretrain_model_G: ../experiments/001_EDVRwoTSA_scratch_lr4e-4_600k_REDS_LrCAR4S/models/600000_G.pth
+  pretrain_model_G: ../experiments/pretrained_models/EDVR_REDS_SR_M.pth
   strict_load: false
   resume_state: ~
 

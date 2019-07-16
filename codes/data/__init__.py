@@ -38,8 +38,8 @@ def create_dataset(dataset_opt):
         from data.REDS_dataset import REDSDataset as D
     elif mode == "Vimeo90K":
         from data.Vimeo90K_dataset import Vimeo90KDataset as D
-    elif mode == "plateLicense":
-        from data.plateLicenseDataset import PlateLicenseDataset as D
+    elif mode == "licensePlate":
+        from data.licensePlateDataset import LicensePlateDataset as D
     else:
         raise NotImplementedError("Dataset [{:s}] is not recognized.".format(mode))
     dataset = D(dataset_opt)

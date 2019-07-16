@@ -21,9 +21,9 @@ except ImportError:
 logger = logging.getLogger("base")
 
 
-class PlateLicenseDataset(data.Dataset):
+class LicensePlateDataset(data.Dataset):
     """
-    Reading the training PlateLicenseDataset dataset
+    Reading the training LicensePlateDataset dataset
     key example: XXXX_X_Y_ZZZZZZ,
     X: Directory
     Y: Total number of images
@@ -34,7 +34,7 @@ class PlateLicenseDataset(data.Dataset):
     """
 
     def __init__(self, opt):
-        super(PlateLicenseDataset, self).__init__()
+        super(LicensePlateDataset, self).__init__()
         self.opt = opt
         # temporal augmentation
         self.interval_list = opt["interval_list"]
@@ -128,8 +128,9 @@ class PlateLicenseDataset(data.Dataset):
 
         scale = self.opt["scale"]
         GT_size = self.opt["GT_size"]
-        key = self.paths_GT[index]
-        name_a, name_b = key.rsplit("_", 1)
+        name_a, totalKeyPerDir, name_b = self.paths_GT[index].rsplit("_", 2)
+        key = name_a + "_" + name_b
+        totalKeyPerDir = int(totalKeyPerDir)
         center_frame_idx = int(name_b)
 
         #### determine the neighbor frames
@@ -139,7 +140,7 @@ class PlateLicenseDataset(data.Dataset):
             N_frames = self.opt["N_frames"]
             if self.random_reverse and random.random() < 0.5:
                 direction = random.choice([0, 1])
-            if center_frame_idx + interval * (N_frames - 1) > 99:
+            if center_frame_idx + interval * (N_frames - 1) > totalKeyPerDir:
                 direction = 0
             elif center_frame_idx - interval * (N_frames - 1) < 0:
                 direction = 1
@@ -163,10 +164,10 @@ class PlateLicenseDataset(data.Dataset):
             name_b = "{:06d}".format(neighbor_list[0])
         else:
             # ensure not exceeding the borders
-            while (center_frame_idx + self.half_N_frames * interval > 99) or (
+            while (center_frame_idx + self.half_N_frames * interval > totalKeyPerDir) or (
                 center_frame_idx - self.half_N_frames * interval < 0
             ):
-                center_frame_idx = random.randint(0, 99)
+                center_frame_idx = random.randint(0, totalKeyPerDir)
             # get the neighbor list
             neighbor_list = list(
                 range(
