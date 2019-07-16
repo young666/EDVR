@@ -227,7 +227,7 @@ def main():
             if current_step % 1 == 0:
                 output = model.get_current_visuals(need_GT=False)
                 output = util.tensor2img(output['restore'])
-                savePath = joinPath(opt["path"]["log"], str(current_step))
+                savePath = joinPath(opt['path']['val_images'], str(current_step))
 
                 logger.info("Saving output in {}".format(savePath))
                 util.mkdir(savePath)
