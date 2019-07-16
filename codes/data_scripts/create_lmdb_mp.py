@@ -268,8 +268,10 @@ def test_lmdb(dataroot, dataset="REDS"):
     # read one image
     if dataset == "vimeo90k":
         key = "00001_0001_4"
-    else:
+    elif dataset == "REDS":
         key = "000_00000000"
+    else:
+        key = "0000_00_000000"
     print("Reading {} for test.".format(key))
     with env.begin(write=False) as txn:
         buf = txn.get(key.encode("ascii"))

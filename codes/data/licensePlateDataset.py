@@ -60,12 +60,12 @@ class LicensePlateDataset(data.Dataset):
         logger.info("Using cache keys - {}.".format(cache_keys))
         self.paths_GT = pickle.load(open("./data/{}".format(cache_keys), "rb"))
         # remove the REDS4 for testing
-#         self.paths_GT = [
-#             v
-#             for v in self.paths_GT
-#             if v.split("_")[0] not in ["000", "011", "015", "020"]
-#         ]
-#         assert self.paths_GT, "Error: GT path is empty."
+        #         self.paths_GT = [
+        #             v
+        #             for v in self.paths_GT
+        #             if v.split("_")[0] not in ["000", "011", "015", "020"]
+        #         ]
+        #         assert self.paths_GT, "Error: GT path is empty."
 
         if self.data_type == "lmdb":
             self.GT_env, self.LQ_env = None, None
@@ -128,8 +128,8 @@ class LicensePlateDataset(data.Dataset):
 
         scale = self.opt["scale"]
         GT_size = self.opt["GT_size"]
-        name_a, totalKeyPerDir, name_b = self.paths_GT[index].rsplit("_", 2)
-        key = name_a + "_" + name_b
+        key = self.paths_GT[index]
+        name_a, totalKeyPerDir, name_b = key.rsplit("_", 2)
         totalKeyPerDir = int(totalKeyPerDir)
         center_frame_idx = int(name_b)
 
@@ -164,9 +164,9 @@ class LicensePlateDataset(data.Dataset):
             name_b = "{:06d}".format(neighbor_list[0])
         else:
             # ensure not exceeding the borders
-            while (center_frame_idx + self.half_N_frames * interval > totalKeyPerDir) or (
-                center_frame_idx - self.half_N_frames * interval < 0
-            ):
+            while (
+                center_frame_idx + self.half_N_frames * interval > totalKeyPerDir
+            ) or (center_frame_idx - self.half_N_frames * interval < 0):
                 center_frame_idx = random.randint(0, totalKeyPerDir)
             # get the neighbor list
             neighbor_list = list(
@@ -210,7 +210,9 @@ class LicensePlateDataset(data.Dataset):
                 img_LQ = img_LQ.astype(np.float32) / 255.0
             elif self.data_type == "lmdb":
                 img_LQ = util.read_img(
-                    self.LQ_env, "{}_{:06d}".format(name_a, v), LQ_size_tuple
+                    self.LQ_env,
+                    "{}_{}_{:06d}".format(name_a, totalKeyPerDir, v),
+                    LQ_size_tuple,
                 )
             else:
                 img_LQ = util.read_img(None, img_LQ_path)

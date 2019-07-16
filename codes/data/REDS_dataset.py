@@ -11,7 +11,7 @@ import cv2
 import lmdb
 import torch
 import torch.utils.data as data
-import codes.data.util as util
+import data.util as util
 
 try:
     import mc  # import memcached
