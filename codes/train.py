@@ -15,6 +15,10 @@ from data import create_dataloader, create_dataset
 from models import create_model
 
 
+# Default methods
+joinPath = os.path.join
+
+
 def init_dist(backend="nccl", **kwargs):
     """ initialization for distributed training"""
     # if mp.get_start_method(allow_none=True) is None:
@@ -218,6 +222,14 @@ def main():
                     logger.info(message)
             #### validation
             # currently, it does not support validation during training
+
+            #### output the result
+            if current_step % 1 == 0:
+                output = model.get_current_visuals(need_GT=False)
+                output = util.tensor2img(output['restore'])
+                savePath = joinPath(opt["path"]["log"], str(current_step))
+                util.mkdir(savePath)
+                util.save_img(output, savePath)
 
             #### save models and training states
             if current_step % opt["logger"]["save_checkpoint_freq"] == 0:
