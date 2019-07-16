@@ -228,6 +228,8 @@ def main():
                 output = model.get_current_visuals(need_GT=False)
                 output = util.tensor2img(output['restore'])
                 savePath = joinPath(opt["path"]["log"], str(current_step))
+
+                logger.info("Saving output in {}".format(savePath))
                 util.mkdir(savePath)
                 util.save_img(output, savePath)
 
