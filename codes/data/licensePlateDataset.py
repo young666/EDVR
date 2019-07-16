@@ -166,8 +166,8 @@ class LicensePlateDataset(data.Dataset):
             # ensure not exceeding the borders
             while (
                 center_frame_idx + self.half_N_frames * interval > totalKeyPerDir
-            ) or (center_frame_idx - self.half_N_frames * interval < 0):
-                center_frame_idx = random.randint(0, totalKeyPerDir)
+            ) or (center_frame_idx - self.half_N_frames * interval < 1):
+                center_frame_idx = random.randint(1, totalKeyPerDir)
             # get the neighbor list
             neighbor_list = list(
                 range(
