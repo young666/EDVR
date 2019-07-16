@@ -167,7 +167,7 @@ def main():
     assert train_loader is not None
 
     #### create model
-    model_path = opt['path']['pretrain_model_G']
+    model_path = opt["path"]["pretrain_model_G"]
     model = create_model(opt)
 
     #### resume training
@@ -226,12 +226,13 @@ def main():
             #### output the result
             if current_step % 1 == 0:
                 output = model.get_current_visuals(need_GT=False)
-                output = util.tensor2img(output['restore'])
-                savePath = joinPath(opt['path']['val_images'], str(current_step) + ".png")
+                output = util.tensor2img(output["restore"])
+                savePath = opt["path"]["val_images"]
 
                 logger.info("Saving output in {}".format(savePath))
+                logger.info("Output: {}, shape: {}".format(output, output.shape()))
                 util.mkdir(savePath)
-                util.save_img(output.squeeze(0), savePath)
+                util.save_img(output, joinPath(savePath, str(current_step) + ".png"))
 
             #### save models and training states
             if current_step % opt["logger"]["save_checkpoint_freq"] == 0:
