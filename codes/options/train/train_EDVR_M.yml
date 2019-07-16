@@ -1,5 +1,5 @@
 #### general settings
-name: 002_EDVR_predeblur_HRin_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
+name: 002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
 use_tb_logger: true
 model: VideoSR_base
 distortion: sr
@@ -37,7 +37,7 @@ network_G:
   front_RBs: 5
   back_RBs: 10
   predeblur: true
-  HR_in: true
+  HR_in: false
   w_TSA: true
 
 #### path
