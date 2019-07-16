@@ -224,13 +224,12 @@ def main():
             # currently, it does not support validation during training
 
             #### output the result
-            if current_step % 1 == 0:
+            if current_step % 10e3 == 0:
                 output = model.get_current_visuals(need_GT=False)
                 output = util.tensor2img(output["restore"])
                 savePath = opt["path"]["val_images"]
 
                 logger.info("Saving output in {}".format(savePath))
-                logger.info("Output: {}, shape: {}".format(output, output.shape))
                 util.mkdir(savePath)
                 util.save_img(output, joinPath(savePath, str(current_step) + ".png"))
 
