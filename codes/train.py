@@ -230,7 +230,7 @@ def main():
                 savePath = opt["path"]["val_images"]
 
                 logger.info("Saving output in {}".format(savePath))
-                logger.info("Output: {}, shape: {}".format(output, output.shape()))
+                logger.info("Output: {}, shape: {}".format(output, output.shape))
                 util.mkdir(savePath)
                 util.save_img(output, joinPath(savePath, str(current_step) + ".png"))
 
