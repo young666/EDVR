@@ -231,7 +231,7 @@ def main():
 
                 logger.info("Saving output in {}".format(savePath))
                 util.mkdir(savePath)
-                util.save_img(output, savePath)
+                util.save_img(output.squeeze(0), savePath)
 
             #### save models and training states
             if current_step % opt["logger"]["save_checkpoint_freq"] == 0:
