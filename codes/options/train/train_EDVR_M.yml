@@ -1,5 +1,5 @@
 #### general settings
-name: 002_EDVR_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
+name: 002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
 use_tb_logger: true
 model: VideoSR_base
 distortion: sr
@@ -21,7 +21,7 @@ datasets:
     N_frames: 5
     use_shuffle: true
     n_workers: 3  # per GPU
-    batch_size: 32
+    batch_size: 16
     GT_size: 256
     LQ_size: 64
     use_flip: true
@@ -36,7 +36,7 @@ network_G:
   groups: 8
   front_RBs: 5
   back_RBs: 10
-  predeblur: false
+  predeblur: true
   HR_in: false
   w_TSA: true
 
