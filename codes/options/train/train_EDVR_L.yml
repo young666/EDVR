@@ -1,5 +1,5 @@
 #### general settings
-name: 002_EDVR_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
+name: 002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
 use_tb_logger: true
 model: VideoSR_base
 distortion: sr
@@ -21,7 +21,7 @@ datasets:
     N_frames: 5
     use_shuffle: true
     n_workers: 4  # per GPU
-    batch_size: 8
+    batch_size: 4
     GT_size: 256
     LQ_size: 64
     use_flip: true
@@ -36,7 +36,7 @@ network_G:
   groups: 8
   front_RBs: 5
   back_RBs: 40
-  predeblur: false
+  predeblur: true
   HR_in: false
   w_TSA: true
 
@@ -44,11 +44,11 @@ network_G:
 path:
   pretrain_model_G: ../experiments/pretrained_models/EDVR_REDS_SRblur_L.pth
   strict_load: false
-  resume_state: ~
+  resume_state: ../experiments/002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k/training_state/48000.state
 
 #### training settings: learning rate scheme, loss
 train:
-  lr_G: !!float 4e-4
+  lr_G: !!float 1e-4
   lr_scheme: CosineAnnealingLR_Restart
   beta1: 0.9
   beta2: 0.99
