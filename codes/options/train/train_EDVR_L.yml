@@ -1,5 +1,5 @@
 #### general settings
-name: 002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
+name: 002_EDVR_predeblur_EDVRwoTSAIni_lr1e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
 use_tb_logger: true
 model: VideoSR_base
 distortion: sr
@@ -44,7 +44,7 @@ network_G:
 path:
   pretrain_model_G: ../experiments/pretrained_models/EDVR_REDS_SRblur_L.pth
   strict_load: false
-  resume_state: ../experiments/002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k/training_state/48000.state
+  resume_state: ~
 
 #### training settings: learning rate scheme, loss
 train:
