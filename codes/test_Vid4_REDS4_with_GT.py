@@ -23,7 +23,7 @@ def main():
     device = torch.device("cuda")
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     data_mode = (
-        "sharp_bicubic"
+        "licensePlate_blur_bicubic"
     )  # Vid4 | sharp_bicubic | blur_bicubic | blur | blur_comp
     # Vid4: SR
     # REDS4: sharp_bicubic (SR-clean), blur_bicubic (SR-blur);
@@ -59,6 +59,11 @@ def main():
             model_path = (
                 "../experiments/pretrained_models/EDVR_REDS_deblurcomp_Stage2.pth"
             )
+    elif data_mode == "licensePlate_blur_bicubic":
+        model_path = (
+            "/workspace/video_sr/EDVR/experiments/"
+            + "pretrained_models/EDVR_licensePlate_SRblur_L.pth"
+        )
     else:
         raise NotImplementedError
 
@@ -69,9 +74,9 @@ def main():
 
     predeblur, HR_in = False, False
     back_RBs = 40
-    if data_mode == "blur_bicubic":
+    if (data_mode == "blur_bicubic") or (data_mode == "licensePlate_blur_bicubic"):
         predeblur = True
-    if data_mode == "blur" or data_mode == "blur_comp":
+    elif data_mode == "blur" or data_mode == "blur_comp":
         predeblur, HR_in = True, True
     if stage == 2:
         HR_in = True
@@ -82,6 +87,9 @@ def main():
     if data_mode == "Vid4":
         test_dataset_folder = "../datasets/Vid4/BIx4"
         GT_dataset_folder = "../datasets/Vid4/GT"
+    elif data_mode == "licensePlate_blur_bicubic":
+        test_dataset_folder = "../datasets/licensePlate2/BIx4"
+        GT_dataset_folder = "../datasets/licensePlate2/GT"
     else:
         if stage == 1:
             test_dataset_folder = "../datasets/REDS4/{}".format(data_mode)
