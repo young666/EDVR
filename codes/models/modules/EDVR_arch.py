@@ -51,6 +51,7 @@ class Predeblur_ResNet_Pyramid(nn.Module):
         L3_fea = F.interpolate(
             self.RB_L3_1(L3_fea), scale_factor=2, mode="bilinear", align_corners=False
         )
+        print(type(L2_fea), L2_fea.shape, L3_fea.shape)
         L2_fea = self.RB_L2_1(L2_fea) + L3_fea
         L2_fea = F.interpolate(
             self.RB_L2_2(L2_fea), scale_factor=2, mode="bilinear", align_corners=False
