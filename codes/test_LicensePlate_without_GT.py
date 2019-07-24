@@ -89,8 +89,8 @@ def main():
         test_dataset_folder = "../datasets/Vid4/BIx4"
         # GT_dataset_folder = "../datasets/Vid4/GT"
     elif data_mode == "licensePlate_blur_bicubic":
-        test_dataset_folder = "../datasets/license_plate2/BIx4"
-        # GT_dataset_folder = "../datasets/license_plate2/GT"
+        test_dataset_folder = "../datasets/license_plate/BIx4"
+        # GT_dataset_folder = "../datasets/license_plate/GT"
     else:
         if stage == 1:
             test_dataset_folder = "../datasets/REDS4/{}".format(data_mode)
