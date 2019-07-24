@@ -145,7 +145,6 @@ def main():
             util.mkdirs(save_subfolder)
 
         #### read LQ and GT images
-        print(subfolder)
         imgs_LQ = test_util.read_img_seq(subfolder)
         # img_GT_l = []
         # for img_GT_path in sorted(glob.glob(osp.join(subfolder_GT, "*"))):
