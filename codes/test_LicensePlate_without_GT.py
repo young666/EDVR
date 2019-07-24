@@ -172,14 +172,15 @@ def main():
 
             if save_imgs:
                 cv2.imwrite(osp.join(save_subfolder, "{}.png".format(img_name)), output)
+            logger.info("{:3d} - {:25}".format(img_idx + 1, img_name))
 
             # calculate PSNR
-            output = output / 255.0
+            # output = output / 255.0
             # GT = np.copy(img_GT_l[img_idx])
             # For REDS, evaluate on RGB channels; for Vid4, evaluate on the Y channel
-            if data_mode == "Vid4":  # bgr2y, [0, 1]
-                # GT = data_util.bgr2ycbcr(GT, only_y=True)
-                output = data_util.bgr2ycbcr(output, only_y=True)
+            # if data_mode == "Vid4":  # bgr2y, [0, 1]
+            #     GT = data_util.bgr2ycbcr(GT, only_y=True)
+            #     output = data_util.bgr2ycbcr(output, only_y=True)
 
             # output, GT = test_util.crop_border([output, GT], crop_border)
             # crt_psnr = util.calculate_psnr(output * 255, GT * 255)
@@ -219,17 +220,17 @@ def main():
         #     )
         # )
 
-    logger.info("################ Tidy Outputs ################")
-    for subfolder_name, psnr, psnr_center, psnr_border in zip(
-        subfolder_name_l, avg_psnr_l, avg_psnr_center_l, avg_psnr_border_l
-    ):
-        logger.info(
-            "Folder {} - Average PSNR: {:.6f} dB. "
-            "Center PSNR: {:.6f} dB. "
-            "Border PSNR: {:.6f} dB.".format(
-                subfolder_name, psnr, psnr_center, psnr_border
-            )
-        )
+    # logger.info("################ Tidy Outputs ################")
+    # for subfolder_name, psnr, psnr_center, psnr_border in zip(
+    #     subfolder_name_l, avg_psnr_l, avg_psnr_center_l, avg_psnr_border_l
+    # ):
+    #     logger.info(
+    #         "Folder {} - Average PSNR: {:.6f} dB. "
+    #         "Center PSNR: {:.6f} dB. "
+    #         "Border PSNR: {:.6f} dB.".format(
+    #             subfolder_name, psnr, psnr_center, psnr_border
+    #         )
+    #     )
     logger.info("################ Final Results ################")
     logger.info("Data: {} - {}".format(data_mode, test_dataset_folder))
     logger.info("Padding mode: {}".format(padding))
