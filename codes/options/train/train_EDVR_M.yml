@@ -21,7 +21,7 @@ datasets:
     N_frames: 5
     use_shuffle: true
     n_workers: 8  # per GPU
-    batch_size: 32
+    batch_size: 16
     GT_size: 256
     LQ_size: 64
     use_flip: true
@@ -36,9 +36,9 @@ network_G:
   groups: 8
   front_RBs: 5
   back_RBs: 10
-  predeblur: true
+  predeblur: false
   HR_in: false
-  w_TSA: false
+  w_TSA: true
 
 #### path
 path:
