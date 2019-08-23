@@ -59,7 +59,6 @@ def _read_img_lmdb(env, key, size):
     size: (C, H, W) tuple'''
     with env.begin(write=False, buffers=True) as txn:
         buf = txn.get(key.encode('ascii'))
-        
     if not buf:
         print(buf, key)
     img_flat = np.frombuffer(buf, dtype=np.uint8)

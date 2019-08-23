@@ -121,7 +121,7 @@ def main():
         logger.info("Random seed: {}".format(seed))
     util.set_random_seed(seed)
 
-    torch.backends.cudnn.benckmark = True
+    torch.backends.cudnn.benchmark = True
     # torch.backends.cudnn.deterministic = True
 
     #### create train and val dataloader
@@ -167,7 +167,7 @@ def main():
     assert train_loader is not None
 
     #### create model
-    model_path = opt["path"]["pretrain_model_G"]
+    # model_path = opt["path"]["pretrain_model_G"]
     model = create_model(opt)
 
     #### resume training

@@ -237,15 +237,15 @@ def main():
     logger.info("Model path: {}".format(model_path))
     logger.info("Save images: {}".format(save_imgs))
     logger.info("Flip test: {}".format(flip_test))
-    logger.info(
-        "Total Average PSNR: {:.6f} dB for {} clips. "
-        "Center PSNR: {:.6f} dB. Border PSNR: {:.6f} dB.".format(
-            sum(avg_psnr_l) / len(avg_psnr_l),
-            len(subfolder_l),
-            sum(avg_psnr_center_l) / len(avg_psnr_center_l),
-            sum(avg_psnr_border_l) / len(avg_psnr_border_l),
-        )
-    )
+    # logger.info(
+    #     "Total Average PSNR: {:.6f} dB for {} clips. "
+    #     "Center PSNR: {:.6f} dB. Border PSNR: {:.6f} dB.".format(
+    #         sum(avg_psnr_l) / len(avg_psnr_l),
+    #         len(subfolder_l),
+    #         sum(avg_psnr_center_l) / len(avg_psnr_center_l),
+    #         sum(avg_psnr_border_l) / len(avg_psnr_border_l),
+    #     )
+    # )
 
 
 if __name__ == "__main__":
