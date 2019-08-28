@@ -32,7 +32,7 @@ def create_dataloader(dataset, dataset_opt, opt, sampler):
         )
 
 
-def create_dataset(dataset_opt):
+def create_dataset(dataset_opt, isVal=False):
     mode = dataset_opt["mode"]
     if mode == "REDS":
         from data.REDS_dataset import REDSDataset as D
@@ -42,7 +42,7 @@ def create_dataset(dataset_opt):
         from data.licensePlateDataset import LicensePlateDataset as D
     else:
         raise NotImplementedError("Dataset [{:s}] is not recognized.".format(mode))
-    dataset = D(dataset_opt)
+    dataset = D(dataset_opt, isVal)
 
     logger = logging.getLogger("base")
     logger.info(

@@ -16,7 +16,8 @@ datasets:
     border_mode: false
     dataroot_GT: /workspace/video_sr/EDVR/datasets/license_plate/GT.lmdb
     dataroot_LQ: /workspace/video_sr/EDVR/datasets/license_plate/BIx4.lmdb
-    cache_keys: LicensePlate_trainval_keys.pkl
+    cache_keys_train: LicensePlate_train_keys.pkl
+    cache_keys_val: LicensePlate1_val_keys.pkl
 
     N_frames: 5
     use_shuffle: true

@@ -33,7 +33,7 @@ class LicensePlateDataset(data.Dataset):
     support reading N LQ frames, N = 1, 3, 5, 7
     """
 
-    def __init__(self, opt):
+    def __init__(self, opt, isVal=False):
         super(LicensePlateDataset, self).__init__()
         self.opt = opt
         # temporal augmentation
@@ -52,11 +52,19 @@ class LicensePlateDataset(data.Dataset):
             False if opt["GT_size"] == opt["LQ_size"] else True
         )  # low resolution inputs
         #### directly load image keys
-        if opt["cache_keys"]:
-            logger.info("Using cache keys: {}".format(opt["cache_keys"]))
-            cache_keys = opt["cache_keys"]
+
+        # Check if this is validation dataset
+        if isVal:
+            logger.info(
+                "Using cache keys for validating: {}".format(opt["cache_keys_val"])
+            )
+            cache_keys = opt["cache_keys_val"]
         else:
-            cache_keys = "REDS_trainval_keys.pkl"
+            logger.info(
+                "Using cache keys for training: {}".format(opt["cache_keys_train"])
+            )
+            cache_keys = opt["cache_keys_train"]
+
         logger.info("Using cache keys - {}.".format(cache_keys))
         self.paths_GT = pickle.load(open("./data/{}".format(cache_keys), "rb"))
         # remove the REDS4 for testing

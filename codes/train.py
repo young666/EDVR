@@ -154,14 +154,15 @@ def main():
                     )
                 )
         elif phase == "val":
-            pass
-            """
-            val_set = create_dataset(dataset_opt)
+            val_set = create_dataset(dataset_opt, isVal=True)
             val_loader = create_dataloader(val_set, dataset_opt, opt, None)
             if rank <= 0:
-                logger.info('Number of val images in [{:s}]: {:d}'.format(
-                    dataset_opt['name'], len(val_set)))
-            """
+                logger.info(
+                    "Number of val images in [{:s}]: {:d}".format(
+                        dataset_opt["name"], len(val_set)
+                    )
+                )
+
         else:
             raise NotImplementedError("Phase [{:s}] is not recognized.".format(phase))
     assert train_loader is not None
@@ -225,13 +226,53 @@ def main():
 
             #### output the result
             if current_step % 10e3 == 0:
-                output = model.get_current_visuals(need_GT=False)
-                output = util.tensor2img(output["restore"])
-                savePath = opt["path"]["val_images"]
+                avg_psnr = 0
+                idx = 0
 
-                logger.info("Saving output in {}".format(savePath))
-                util.mkdir(savePath)
-                util.save_img(output, joinPath(savePath, str(current_step) + ".png"))
+                for val_data in val_loader:
+                    idx += 1
+                    imgName = val_data["key"] + '.png'
+                    savePath = os.path.join(
+                        opt["path"]["val_images"], current_step, imgName
+                    )
+
+                    model.feed_data(val_data)
+                    model.test()
+
+                    output = model.get_current_visuals()
+                    hr = util.tensor2img(output["GT"])
+                    sr = util.tensor2img(output["restore"])
+
+                    # Cropping to calculate PSNR
+                    hr /= 255.0
+                    sr /= 255.0
+                    scale = 4
+
+                    H, W, C = hr.shape
+                    H_r, W_r = H % scale, W % scale
+                    cropped_hr = hr[: H - H_r, : W - W_r, :]
+                    cropped_sr = sr[: H - H_r, : W - W_r, :]
+                    avg_psnr += util.calculate_psnr(cropped_sr * 255, cropped_hr * 255)
+
+                    logger.info("Saving output in {}".format(savePath))
+                    util.mkdir(savePath)
+                    util.save_img(
+                        output, joinPath(savePath, str(current_step) + ".png")
+                    )
+
+                avg_psnr /= idx
+
+                # log
+                logger.info("# Validation # PSNR: {:.4e}".format(avg_psnr))
+                logger_val = logging.getLogger("val")  # validation logger
+                logger_val.info(
+                    "<epoch:{:3d}, iter:{:8,d}> psnr: {:.4e}".format(
+                        epoch, current_step, avg_psnr
+                    )
+                )
+                # tensorboard logger
+                if opt["use_tb_logger"] and "debug" not in opt["name"]:
+                    tb_logger.add_scalar("psnr", avg_psnr, current_step)
 
             #### save models and training states
             if current_step % opt["logger"]["save_checkpoint_freq"] == 0:
