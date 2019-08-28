@@ -141,7 +141,6 @@ class LicensePlateDataset(data.Dataset):
 
         # Restore the origin key to match file name
         key = name_a + "_" + name_b
-        print(key)
         totalKeyPerDir = int(totalKeyPerDir)
         center_frame_idx = int(name_b)
 
@@ -223,7 +222,7 @@ class LicensePlateDataset(data.Dataset):
             elif self.data_type == "lmdb":
                 img_LQ = util.read_img(
                     self.LQ_env,
-                    "{}_{}_{:06d}".format(name_a, totalKeyPerDir, v),
+                    "{}_{:06d}".format(name_a, v),
                     LQ_size_tuple,
                 )
             else:
