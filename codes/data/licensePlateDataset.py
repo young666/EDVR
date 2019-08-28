@@ -138,7 +138,10 @@ class LicensePlateDataset(data.Dataset):
         GT_size = self.opt["GT_size"]
         key = self.paths_GT[index]
         name_a, totalKeyPerDir, name_b = key.rsplit("_", 2)
+
+        # Restore the origin key to match file name
         key = name_a + "_" + name_b
+        print(key)
         totalKeyPerDir = int(totalKeyPerDir)
         center_frame_idx = int(name_b)
 
