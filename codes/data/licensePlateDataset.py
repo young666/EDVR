@@ -208,6 +208,7 @@ class LicensePlateDataset(data.Dataset):
 
         #### get LQ images
         LQ_size_tuple = (3, 70, 70) if self.LR_input else (3, 280, 280)
+        print(LQ_size_tuple)
         img_LQ_l = []
         for v in neighbor_list:
             img_LQ_path = osp.join(self.LQ_root, name_a, "{:06d}.png".format(v))
