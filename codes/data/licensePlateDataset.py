@@ -138,6 +138,7 @@ class LicensePlateDataset(data.Dataset):
         GT_size = self.opt["GT_size"]
         key = self.paths_GT[index]
         name_a, totalKeyPerDir, name_b = key.rsplit("_", 2)
+        key = name_a + "_" + name_b
         totalKeyPerDir = int(totalKeyPerDir)
         center_frame_idx = int(name_b)
 
