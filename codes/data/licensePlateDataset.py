@@ -56,14 +56,14 @@ class LicensePlateDataset(data.Dataset):
         # Check if this is validation dataset
         if isVal:
             logger.info(
-                "Using cache keys for validating: {}".format(opt["cache_keys_val"])
+                "Using cache keys for validating: {}".format(opt["cache_keys"])
             )
-            cache_keys = opt["cache_keys_val"]
         else:
             logger.info(
-                "Using cache keys for training: {}".format(opt["cache_keys_train"])
+                "Using cache keys for training: {}".format(opt["cache_keys"])
             )
-            cache_keys = opt["cache_keys_train"]
+
+        cache_keys = opt["cache_keys"]
 
         logger.info("Using cache keys - {}.".format(cache_keys))
         self.paths_GT = pickle.load(open("./data/{}".format(cache_keys), "rb"))

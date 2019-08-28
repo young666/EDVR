@@ -14,10 +14,9 @@ datasets:
     interval_list: [1]
     random_reverse: false
     border_mode: false
-    dataroot_GT: /workspace/video_sr/EDVR/datasets/license_plate/GT.lmdb
-    dataroot_LQ: /workspace/video_sr/EDVR/datasets/license_plate/BIx4.lmdb
-    cache_keys_train: LicensePlate_train_keys.pkl
-    cache_keys_val: LicensePlate1_val_keys.pkl
+    dataroot_GT: /content/EDVR/datasets/license_plate.lmdb
+    dataroot_LQ: /content/EDVR/datasets/license_plate_BI_x4.lmdb
+    cache_keys: LicensePlate_train_keys.pkl
 
     N_frames: 5
     use_shuffle: true
@@ -28,6 +27,18 @@ datasets:
     use_flip: true
     use_rot: true
     color: RGB
+
+  val:
+    name: licensePlate
+    mode: licensePlate
+    interval_list: [1]
+    random_reverse: false
+    border_mode: false
+    dataroot_GT: /content/EDVR/datasets/license_plate1.lmdb
+    dataroot_LQ: /content/EDVR/datasets/license_plate1_BI_x4.lmdb
+    cache_keys: LicensePlate1_val_keys.pkl
+
+    N_frames: 5
 
 #### network structures
 network_G:
@@ -43,7 +54,7 @@ network_G:
 
 #### path
 path:
-  pretrain_model_G: ../experiments/pretrained_models/EDVR_REDS_SR_M.pth
+  pretrain_model_G: /content/EDVR/experiments/pretrained_models/EDVR_REDS_SR_M.pth
   strict_load: false
   resume_state: ~
 
@@ -70,4 +81,4 @@ train:
 #### logger
 logger:
   print_freq: 100
-  save_checkpoint_freq: !!float 2e3
+  save_checkpoint_freq: !!float 2

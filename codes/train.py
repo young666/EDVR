@@ -280,7 +280,7 @@ def main():
                 if rank <= 0:
                     # Save the experiments in case of Colab is timeout
                     copy_tree(
-                        "/content/experiments",
+                        "/content/EDVR/experiments",
                         "/content/drive/My Drive/LVTN/SuperResolution/SR_models/EDVR/",
                     )
                     logger.info("Saving models and training states.")
