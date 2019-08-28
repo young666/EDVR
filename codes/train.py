@@ -3,6 +3,7 @@ import math
 import argparse
 import random
 import logging
+from distutils.dir_util import copy_tree
 
 import torch
 import torch.distributed as dist
@@ -225,13 +226,13 @@ def main():
             # currently, it does not support validation during training
 
             #### output the result
-            if current_step % 10e3 == 0:
+            if current_step % opt["train"]["val_freq"] == 0:
                 avg_psnr = 0
                 idx = 0
 
                 for val_data in val_loader:
                     idx += 1
-                    imgName = val_data["key"] + '.png'
+                    imgName = val_data["key"] + ".png"
                     savePath = os.path.join(
                         opt["path"]["val_images"], current_step, imgName
                     )
@@ -277,6 +278,11 @@ def main():
             #### save models and training states
             if current_step % opt["logger"]["save_checkpoint_freq"] == 0:
                 if rank <= 0:
+                    # Save the experiments in case of Colab is timeout
+                    copy_tree(
+                        "/content/experiments",
+                        "/content/drive/My Drive/LVTN/SuperResolution/SR_models/EDVR/",
+                    )
                     logger.info("Saving models and training states.")
                     model.save(current_step)
                     model.save_training_state(epoch, current_step)

@@ -63,7 +63,7 @@ train:
 
   pixel_criterion: cb
   pixel_weight: 1.0
-  val_freq: !!float 2e3
+  val_freq: !!float 2
 
   manual_seed: 0
 
