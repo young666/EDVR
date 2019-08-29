@@ -275,6 +275,7 @@ class LicensePlateDataset(data.Dataset):
         img_LQs = torch.from_numpy(
             np.ascontiguousarray(np.transpose(img_LQs, (0, 3, 1, 2)))
         ).float()
+        print(key)
         return {"LQs": img_LQs, "GT": img_GT, "key": key}
 
     def __len__(self):

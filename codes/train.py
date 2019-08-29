@@ -232,8 +232,7 @@ def main():
 
                 for val_data in val_loader:
                     idx += 1
-                    print(val_data, val_data["key"])
-                    imgName = val_data["key"] + ".png"
+                    imgName = val_data["key"][0] + ".png"
                     savePath = os.path.join(
                         opt["path"]["val_images"], current_step, imgName
                     )
