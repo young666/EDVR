@@ -241,8 +241,7 @@ def main():
                     savePath = os.path.join(
                         opt["path"]["val_images"], str(current_step), imgName
                     )
-                    print(val_data["GT"].shape, val_data["LQs"].shape)
-                    
+
                     model.feed_data(val_data)
                     model.test()
 

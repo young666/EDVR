@@ -321,6 +321,8 @@ class EDVR(nn.Module):
         L3_fea = self.lrelu(self.fea_L3_conv1(L2_fea))
         L3_fea = self.lrelu(self.fea_L3_conv2(L3_fea))
 
+        print(L1_fea.shape, L2_fea.shape, L3_fea.shape)
+
         L1_fea = L1_fea.view(B, N, -1, H, W)
         L2_fea = L2_fea.view(B, N, -1, H // 2, W // 2)
         L3_fea = L3_fea.view(B, N, -1, H // 4, W // 4)
