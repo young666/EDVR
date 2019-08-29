@@ -237,7 +237,7 @@ def main():
                         if type(val_data["key"]) is list
                         else val_data["key"]
                     )
-                    imgName = key +".png"
+                    imgName = key + ".png"
                     savePath = os.path.join(
                         opt["path"]["val_images"], str(current_step), imgName
                     )
