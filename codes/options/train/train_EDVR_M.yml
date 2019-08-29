@@ -74,11 +74,11 @@ train:
 
   pixel_criterion: cb
   pixel_weight: 1.0
-  val_freq: !!float 2
+  val_freq: !!float 1e3
 
   manual_seed: 0
 
 #### logger
 logger:
   print_freq: 100
-  save_checkpoint_freq: !!float 2
+  save_checkpoint_freq: !!float 5e3
