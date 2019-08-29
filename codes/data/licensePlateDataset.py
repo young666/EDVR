@@ -207,8 +207,8 @@ class LicensePlateDataset(data.Dataset):
             )
 
         #### get LQ images
-        LQ_size_tuple = (3, 70, 70) if self.LR_input else (3, 280, 280)
-        print(LQ_size_tuple)
+        # LQ_size_tuple = (3, 70, 70) if self.LR_input else (3, 280, 280)
+        LQ_size_tuple = (3, 70, 70)
         img_LQ_l = []
         for v in neighbor_list:
             img_LQ_path = osp.join(self.LQ_root, name_a, "{:06d}.png".format(v))
@@ -221,6 +221,10 @@ class LicensePlateDataset(data.Dataset):
                     )
                 img_LQ = img_LQ.astype(np.float32) / 255.0
             elif self.data_type == "lmdb":
+                # Log info if the size is not matched
+                if LQ_size_tuple != (3, 70, 70):
+                    print(LQ_size_tuple, name_a, v)
+
                 img_LQ = util.read_img(
                     self.LQ_env,
                     "{}_{:06d}".format(name_a, v),
