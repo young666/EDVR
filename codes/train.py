@@ -232,9 +232,14 @@ def main():
 
                 for val_data in val_loader:
                     idx += 1
-                    imgName = val_data["key"][0] + ".png"
+                    key = (
+                        val_data["key"][0]
+                        if type(val_data["key"]) is list
+                        else val_data["key"]
+                    )
+                    imgName = key +".png"
                     savePath = os.path.join(
-                        opt["path"]["val_images"], current_step, imgName
+                        opt["path"]["val_images"], str(current_step), imgName
                     )
 
                     model.feed_data(val_data)
