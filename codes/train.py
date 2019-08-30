@@ -283,13 +283,13 @@ def main():
             if current_step % opt["logger"]["save_checkpoint_freq"] == 0:
                 if rank <= 0:
                     # Save the experiments in case of Colab is timeout
+                    logger.info("Saving models and training states.")
+                    model.save(current_step)
+                    model.save_training_state(epoch, current_step)
                     copy_tree(
                         "/content/EDVR/experiments",
                         "/content/drive/My Drive/LVTN/SuperResolution/SR_models/EDVR/",
                     )
-                    logger.info("Saving models and training states.")
-                    model.save(current_step)
-                    model.save_training_state(epoch, current_step)
 
     if rank <= 0:
         logger.info("Saving the final model.")
