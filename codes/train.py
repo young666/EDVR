@@ -290,6 +290,10 @@ def main():
                         "/content/EDVR/experiments",
                         "/content/drive/My Drive/LVTN/SuperResolution/SR_models/EDVR/experiments",
                     )
+                    copy_tree(
+                        "/content/EDVR/tb_logger",
+                        "/content/drive/My Drive/LVTN/SuperResolution/SR_models/EDVR/tb_logger",
+                    )
 
     if rank <= 0:
         logger.info("Saving the final model.")
