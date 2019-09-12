@@ -20,8 +20,8 @@ datasets:
 
     N_frames: 5
     use_shuffle: true
-    n_workers: 16 # per GPU
-    batch_size: 16
+    n_workers: 4 # per GPU
+    batch_size: 32
     GT_size: 256
     LQ_size: 64
     use_flip: true
@@ -56,7 +56,7 @@ network_G:
 path:
   pretrain_model_G: /content/EDVR/experiments/pretrained_models/EDVR_REDS_SR_M.pth
   strict_load: false
-  resume_state: /content/EDVR/experiments/002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k/training_state/133000.state
+  resume_state: /content/EDVR/experiments/002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k/training_state/137000.state
 
 #### training settings: learning rate scheme, loss
 train:
