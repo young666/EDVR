@@ -1,4 +1,4 @@
-import models.modules.EDVR_arch as EDVR_arch
+import models.archs.EDVR_arch as EDVR_arch
 
 
 ####################

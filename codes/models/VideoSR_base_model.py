@@ -7,7 +7,7 @@ from torch.nn.parallel import DataParallel, DistributedDataParallel
 import models.networks as networks
 import models.lr_scheduler as lr_scheduler
 from .base_model import BaseModel
-from models.modules.loss import CharbonnierLoss
+from models.archs.loss import CharbonnierLoss
 
 logger = logging.getLogger("base")
 

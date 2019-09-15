@@ -7,7 +7,7 @@ Code reference:
 
 import torch
 import torch.nn as nn
-from .module_util import flow_warp
+from .arch_util import flow_warp
 
 
 def normalize(x):
