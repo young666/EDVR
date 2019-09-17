@@ -76,7 +76,10 @@ def main():
 
     predeblur, HR_in = False, False
     back_RBs = 40
-    if (data_mode == "blur_bicubic") or (data_mode == "licensePlate_blur_bicubic"):
+    if (data_mode == "licensePlate_blur_bicubic"):
+        predeblur = False
+        back_RBs = 10
+    elif (data_mode == "blur_bicubic"):
         predeblur = True
     elif data_mode == "blur" or data_mode == "blur_comp":
         predeblur, HR_in = True, True
