@@ -62,8 +62,8 @@ def main():
             )
     elif data_mode == "licensePlate_blur_bicubic":
         model_path = (
-            "/workspace/video_sr/EDVR/experiments/"
-            + "pretrained_models/EDVR_licensePlate_SRblur_L.pth"
+            "/content/EDVR/experiments/002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4"
+            + "_600k_LicensePlate_LrCAR4S_fixTSA50k/models/178000_G.pth"
         )
     else:
         raise NotImplementedError
@@ -89,7 +89,7 @@ def main():
         test_dataset_folder = "../datasets/Vid4/BIx4"
         # GT_dataset_folder = "../datasets/Vid4/GT"
     elif data_mode == "licensePlate_blur_bicubic":
-        test_dataset_folder = "../datasets/license_plate/BIx4"
+        test_dataset_folder = "../datasets/vinhlong_040719_1212"
         # GT_dataset_folder = "../datasets/license_plate/GT"
     else:
         if stage == 1:
@@ -128,7 +128,7 @@ def main():
     model.eval()
     model = model.to(device)
 
-    avg_psnr_l, avg_psnr_center_l, avg_psnr_border_l = [], [], []
+    # avg_psnr_l, avg_psnr_center_l, avg_psnr_border_l = [], [], []
     subfolder_name_l = []
 
     subfolder_l = sorted(glob.glob(osp.join(test_dataset_folder, "*")))
