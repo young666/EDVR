@@ -13,8 +13,9 @@ import torch
 
 import utils.util as util
 import utils.test_util as test_util
-import data.util as data_util
-import models.modules.EDVR_arch as EDVR_arch
+
+# import data.util as data_util
+import models.archs.EDVR_arch as EDVR_arch
 
 
 def main():
