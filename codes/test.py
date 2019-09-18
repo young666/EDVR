@@ -1,131 +1,193 @@
+import os
 import os.path as osp
+import glob
 import logging
-import time
-import argparse
-from collections import OrderedDict
+import numpy as np
+import cv2
+import torch
 
-import options.options as option
 import utils.util as util
-from data.util import bgr2ycbcr
-from data import create_dataset, create_dataloader
-from models import create_model
+import utils.test_util as test_util
+import data.util as data_util
+import models.archs.EDVR_arch as EDVR_arch
 
-#### options
-parser = argparse.ArgumentParser()
-parser.add_argument("-opt", type=str, required=True, help="Path to options YMAL file.")
-opt = option.parse(parser.parse_args().opt, is_train=False)
-opt = option.dict_to_nonedict(opt)
 
-util.mkdirs(
-    (
-        path
-        for key, path in opt["path"].items()
-        if not key == "experiments_root"
-        and "pretrain_model" not in key
-        and "resume" not in key
+def main():
+    #################
+    # configurations
+    #################
+    device = torch.device("cuda")
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    data_mode = "licensePlate_blur_bicubic"
+    flip_test = False
+    model_path = "/content/EDVR/experiments/pretrained_models/EDVR_REDS_SR_M.pth"
+    N_in = 5
+    predeblur, HR_in = False, False
+    back_RBs = 10
+
+    model = EDVR_arch.EDVR(128, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in)
+    test_dataset_folder = "/content/EDVR/datasets/vinhlong_040719_1212"
+    GT_dataset_folder = ""
+
+    #### evaluation
+    crop_border = 0
+    border_frame = N_in // 2  # border frames when evaluate
+    # temporal padding mode
+    if data_mode == "Vid4" or data_mode == "sharp_bicubic":
+        padding = "new_info"
+    else:
+        padding = "replicate"
+    save_imgs = True
+
+    save_folder = "../results/{}".format(data_mode)
+    util.mkdirs(save_folder)
+    util.setup_logger(
+        "base", save_folder, "test", level=logging.INFO, screen=True, tofile=True
     )
-)
-util.setup_logger(
-    "base",
-    opt["path"]["log"],
-    "test_" + opt["name"],
-    level=logging.INFO,
-    screen=True,
-    tofile=True,
-)
-logger = logging.getLogger("base")
-logger.info(option.dict2str(opt))
+    logger = logging.getLogger("base")
 
-#### Create test dataset and dataloader
-test_loaders = []
-for phase, dataset_opt in sorted(opt["datasets"].items()):
-    test_set = create_dataset(dataset_opt)
-    test_loader = create_dataloader(test_set, dataset_opt, opt, sampler=None)
-    logger.info(
-        "Number of test images in [{:s}]: {:d}".format(
-            dataset_opt["name"], len(test_set)
-        )
-    )
-    test_loaders.append(test_loader)
+    #### log info
+    logger.info("Data: {} - {}".format(data_mode, test_dataset_folder))
+    logger.info("Padding mode: {}".format(padding))
+    logger.info("Model path: {}".format(model_path))
+    logger.info("Save images: {}".format(save_imgs))
+    logger.info("Flip test: {}".format(flip_test))
 
-model = create_model(opt)
-for test_loader in test_loaders:
-    test_set_name = test_loader.dataset.opt["name"]
-    logger.info("\nTesting [{:s}]...".format(test_set_name))
-    test_start_time = time.time()
-    dataset_dir = osp.join(opt["path"]["results_root"], test_set_name)
-    util.mkdir(dataset_dir)
+    #### set up the models
+    model.load_state_dict(torch.load(model_path), strict=True)
+    model.eval()
+    model = model.to(device)
 
-    test_results = OrderedDict()
-    test_results["psnr"] = []
-    test_results["ssim"] = []
-    test_results["psnr_y"] = []
-    test_results["ssim_y"] = []
+    avg_psnr_l, avg_psnr_center_l, avg_psnr_border_l = [], [], []
+    subfolder_name_l = []
 
-    for data in test_loader:
-        need_GT = False if test_loader.dataset.opt["dataroot_GT"] is None else True
-        model.feed_data(data, need_GT=need_GT)
-        img_path = data["GT_path"][0] if need_GT else data["LQ_path"][0]
-        img_name = osp.splitext(osp.basename(img_path))[0]
+    subfolder_l = sorted(glob.glob(osp.join(test_dataset_folder, "*")))
+    subfolder_GT_l = sorted(glob.glob(osp.join(GT_dataset_folder, "*")))
+    # for each subfolder
+    for subfolder, subfolder_GT in zip(subfolder_l, subfolder_GT_l):
+        subfolder_name = osp.basename(subfolder)
+        subfolder_name_l.append(subfolder_name)
+        save_subfolder = osp.join(save_folder, subfolder_name)
 
-        model.test()
-        visuals = model.get_current_visuals(need_GT=need_GT)
+        img_path_l = sorted(glob.glob(osp.join(subfolder, "*")))
+        max_idx = len(img_path_l)
+        if save_imgs:
+            util.mkdirs(save_subfolder)
 
-        sr_img = util.tensor2img(visuals["rlt"])  # uint8
+        #### read LQ and GT images
+        imgs_LQ = test_util.read_img_seq(subfolder)
+        img_GT_l = []
+        if subfolder_GT_l:
+            for img_GT_path in sorted(glob.glob(osp.join(subfolder_GT, "*"))):
+                img_GT_l.append(test_util.read_img(img_GT_path))
 
-        # save images
-        suffix = opt["suffix"]
-        if suffix:
-            save_img_path = osp.join(dataset_dir, img_name + suffix + ".png")
-        else:
-            save_img_path = osp.join(dataset_dir, img_name + ".png")
-        util.save_img(sr_img, save_img_path)
+            avg_psnr, avg_psnr_border, avg_psnr_center, N_border, N_center = (
+                0,
+                0,
+                0,
+                0,
+                0,
+            )
 
-        # calculate PSNR and SSIM
-        if need_GT:
-            gt_img = util.tensor2img(visuals["GT"])
-            sr_img, gt_img = util.crop_border([sr_img, gt_img], opt["scale"])
-            psnr = util.calculate_psnr(sr_img, gt_img)
-            ssim = util.calculate_ssim(sr_img, gt_img)
-            test_results["psnr"].append(psnr)
-            test_results["ssim"].append(ssim)
+        # process each image
+        for img_idx, img_path in enumerate(img_path_l):
+            img_name = osp.splitext(osp.basename(img_path))[0]
+            select_idx = test_util.index_generation(
+                img_idx, max_idx, N_in, padding=padding
+            )
+            imgs_in = (
+                imgs_LQ.index_select(0, torch.LongTensor(select_idx))
+                .unsqueeze(0)
+                .to(device)
+            )
 
-            if gt_img.shape[2] == 3:  # RGB image
-                sr_img_y = bgr2ycbcr(sr_img / 255.0, only_y=True)
-                gt_img_y = bgr2ycbcr(gt_img / 255.0, only_y=True)
-
-                psnr_y = util.calculate_psnr(sr_img_y * 255, gt_img_y * 255)
-                ssim_y = util.calculate_ssim(sr_img_y * 255, gt_img_y * 255)
-                test_results["psnr_y"].append(psnr_y)
-                test_results["ssim_y"].append(ssim_y)
-                logger.info(
-                    "{:20s} - PSNR: {:.6f} dB; SSIM: {:.6f}; PSNR_Y: {:.6f} dB; SSIM_Y: {:.6f}.".format(
-                        img_name, psnr, ssim, psnr_y, ssim_y
-                    )
-                )
+            if flip_test:
+                output = test_util.flipx4_forward(model, imgs_in)
             else:
+                output = test_util.single_forward(model, imgs_in)
+            output = util.tensor2img(output.squeeze(0))
+
+            if save_imgs:
+                cv2.imwrite(osp.join(save_subfolder, "{}.png".format(img_name)), output)
+
+            if subfolder_GT_l:
+                # calculate PSNR
+                output = output / 255.0
+                GT = np.copy(img_GT_l[img_idx])
+                # For REDS, evaluate on RGB channels; for Vid4, evaluate on the Y channel
+                if data_mode == "Vid4":  # bgr2y, [0, 1]
+                    GT = data_util.bgr2ycbcr(GT, only_y=True)
+                    output = data_util.bgr2ycbcr(output, only_y=True)
+
+                output, GT = test_util.crop_border([output, GT], crop_border)
+                crt_psnr = util.calculate_psnr(output * 255, GT * 255)
                 logger.info(
-                    "{:20s} - PSNR: {:.6f} dB; SSIM: {:.6f}.".format(
-                        img_name, psnr, ssim
+                    "{:3d} - {:25} \tPSNR: {:.6f} dB".format(
+                        img_idx + 1, img_name, crt_psnr
                     )
                 )
-        else:
-            logger.info(img_name)
 
-    if need_GT:  # metrics
-        # Average PSNR/SSIM results
-        ave_psnr = sum(test_results["psnr"]) / len(test_results["psnr"])
-        ave_ssim = sum(test_results["ssim"]) / len(test_results["ssim"])
+                if (
+                    img_idx >= border_frame and img_idx < max_idx - border_frame
+                ):  # center frames
+                    avg_psnr_center += crt_psnr
+                    N_center += 1
+                else:  # border frames
+                    avg_psnr_border += crt_psnr
+                    N_border += 1
+
+        if subfolder_GT_l:
+            avg_psnr = (avg_psnr_center + avg_psnr_border) / (N_center + N_border)
+            avg_psnr_center = avg_psnr_center / N_center
+            avg_psnr_border = 0 if N_border == 0 else avg_psnr_border / N_border
+            avg_psnr_l.append(avg_psnr)
+            avg_psnr_center_l.append(avg_psnr_center)
+            avg_psnr_border_l.append(avg_psnr_border)
+
+            logger.info(
+                "Folder {} - Average PSNR: {:.6f} dB for {} frames; "
+                "Center PSNR: {:.6f} dB for {} frames; "
+                "Border PSNR: {:.6f} dB for {} frames.".format(
+                    subfolder_name,
+                    avg_psnr,
+                    (N_center + N_border),
+                    avg_psnr_center,
+                    N_center,
+                    avg_psnr_border,
+                    N_border,
+                )
+            )
+
+    logger.info("################ Tidy Outputs ################")
+    if subfolder_GT_l:
+        for subfolder_name, psnr, psnr_center, psnr_border in zip(
+            subfolder_name_l, avg_psnr_l, avg_psnr_center_l, avg_psnr_border_l
+        ):
+            logger.info(
+                "Folder {} - Average PSNR: {:.6f} dB. "
+                "Center PSNR: {:.6f} dB. "
+                "Border PSNR: {:.6f} dB.".format(
+                    subfolder_name, psnr, psnr_center, psnr_border
+                )
+            )
+    logger.info("################ Final Results ################")
+    logger.info("Data: {} - {}".format(data_mode, test_dataset_folder))
+    logger.info("Padding mode: {}".format(padding))
+    logger.info("Model path: {}".format(model_path))
+    logger.info("Save images: {}".format(save_imgs))
+    logger.info("Flip test: {}".format(flip_test))
+
+    if subfolder_GT_l:
         logger.info(
-            "----Average PSNR/SSIM results for "
-            + "{}----\n\tPSNR: {:.6f} dB; SSIM: {:.6f}\n".format(
-                test_set_name, ave_psnr, ave_ssim
+            "Total Average PSNR: {:.6f} dB for {} clips. "
+            "Center PSNR: {:.6f} dB. Border PSNR: {:.6f} dB.".format(
+                sum(avg_psnr_l) / len(avg_psnr_l),
+                len(subfolder_l),
+                sum(avg_psnr_center_l) / len(avg_psnr_center_l),
+                sum(avg_psnr_border_l) / len(avg_psnr_border_l),
             )
         )
-        if test_results["psnr_y"] and test_results["ssim_y"]:
-            ave_psnr_y = sum(test_results["psnr_y"]) / len(test_results["psnr_y"])
-            ave_ssim_y = sum(test_results["ssim_y"]) / len(test_results["ssim_y"])
-            logger.info(
-                "----Y channel, average PSNR/SSIM----\n\tPSNR_Y: "
-                + "{:.6f} dB; SSIM_Y: {:.6f}\n".format(ave_psnr_y, ave_ssim_y)
-            )
+
+
+if __name__ == "__main__":
+    main()

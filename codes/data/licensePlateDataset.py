@@ -65,8 +65,9 @@ class LicensePlateDataset(data.Dataset):
 
         cache_keys = opt["cache_keys"]
 
-        logger.info("Using cache keys - {}.".format(cache_keys))
-        self.paths_GT = pickle.load(open("./data/{}".format(cache_keys), "rb"))
+        if cache_keys:
+            logger.info("Using cache keys - {}.".format(cache_keys))
+            self.paths_GT = pickle.load(open("./data/{}".format(cache_keys), "rb"))
         # remove the REDS4 for testing
         #         self.paths_GT = [
         #             v
