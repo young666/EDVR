@@ -19,6 +19,7 @@ except ImportError:
     pass
 
 logger = logging.getLogger("base")
+imgShape = (3, 128, 128)
 
 
 class LicensePlateDataset(data.Dataset):
@@ -201,7 +202,7 @@ class LicensePlateDataset(data.Dataset):
             img_GT = self._read_img_mc_BGR(self.GT_root, name_a, name_b)
             img_GT = img_GT.astype(np.float32) / 255.0
         elif self.data_type == "lmdb":
-            img_GT = util.read_img(self.GT_env, key, (3, 280, 280))
+            img_GT = util.read_img(self.GT_env, key, imgShape)
         else:
             img_GT = util.read_img(
                 None, osp.join(self.GT_root, name_a, name_b + ".png")

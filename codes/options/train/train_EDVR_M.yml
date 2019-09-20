@@ -14,9 +14,9 @@ datasets:
     interval_list: [1]
     random_reverse: false
     border_mode: false
-    dataroot_GT: /content/EDVR/datasets/license_plate.lmdb
-    dataroot_LQ: /content/EDVR/datasets/license_plate_BI_x4.lmdb
-    cache_keys: LicensePlate_train_keys.pkl
+    dataroot_GT: /content/EDVR/datasets/vinhlong_040719_1212.lmdb
+    dataroot_LQ: /content/EDVR/datasets/vinhlong_040719_1212_BI_x4.lmdb
+    cache_keys: vinhlong_040719_1212_train_keys.pkl
 
     N_frames: 5
     use_shuffle: true
