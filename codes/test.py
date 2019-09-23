@@ -63,7 +63,7 @@ def main():
 
     subfolder_l = sorted(glob.glob(osp.join(test_dataset_folder, "*")))
     subfolder_GT_l = sorted(glob.glob(osp.join(GT_dataset_folder, "*")))
-    isGT = False if subfolder_GT_l == [] else True
+    isGT = bool(GT_dataset_folder)
 
     # for each subfolder
     for subfolder, subfolder_GT in zip(subfolder_l, subfolder_GT_l):
