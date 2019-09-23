@@ -25,7 +25,7 @@ def main():
     predeblur, HR_in = False, False
     back_RBs = 10
 
-    model = EDVR_arch.EDVR(128, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in)
+    model = EDVR_arch.EDVR(64, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in)
     test_dataset_folder = "/content/EDVR/datasets/license_plate"
     GT_dataset_folder = ""
 

@@ -1,5 +1,5 @@
 #### general settings
-name: 002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
+name: 002_EDVR_predeblur_EDVRIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
 use_tb_logger: true
 model: VideoSR_base
 distortion: sr
