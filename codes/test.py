@@ -178,6 +178,7 @@ def main():
     logger.info("Model path: {}".format(model_path))
     logger.info("Save images: {}".format(save_imgs))
     logger.info("Flip test: {}".format(flip_test))
+    logger.info("Is GT: {}".format(isGT))
 
     if isGT:
         logger.info(
