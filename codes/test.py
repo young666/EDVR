@@ -20,13 +20,13 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     data_mode = "licensePlate_blur_bicubic"
     flip_test = False
-    model_path = "/content/EDVR/experiments/pretrained_models/EDVR_REDS_SR_M.pth"
+    model_path = "/content/EDVR/experiments/002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k/models/178000_G.pth"
     N_in = 5
     predeblur, HR_in = False, False
     back_RBs = 10
 
     model = EDVR_arch.EDVR(64, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in)
-    test_dataset_folder = "/content/EDVR/datasets/license_plate"
+    test_dataset_folder = "/content/EDVR/datasets/vinhlong_040719_1212"
     GT_dataset_folder = ""
 
     #### evaluation
@@ -63,6 +63,8 @@ def main():
 
     subfolder_l = sorted(glob.glob(osp.join(test_dataset_folder, "*")))
     subfolder_GT_l = sorted(glob.glob(osp.join(GT_dataset_folder, "*")))
+    isGT = False if subfolder_GT_l == [] else True
+
     # for each subfolder
     for subfolder, subfolder_GT in zip(subfolder_l, subfolder_GT_l):
         subfolder_name = osp.basename(subfolder)
@@ -77,7 +79,7 @@ def main():
         #### read LQ and GT images
         imgs_LQ = test_util.read_img_seq(subfolder)
         img_GT_l = []
-        if subfolder_GT_l:
+        if isGT:
             for img_GT_path in sorted(glob.glob(osp.join(subfolder_GT, "*"))):
                 img_GT_l.append(test_util.read_img(img_GT_path))
 
@@ -110,7 +112,7 @@ def main():
             if save_imgs:
                 cv2.imwrite(osp.join(save_subfolder, "{}.png".format(img_name)), output)
 
-            if subfolder_GT_l:
+            if isGT:
                 # calculate PSNR
                 output = output / 255.0
                 GT = np.copy(img_GT_l[img_idx])
@@ -136,7 +138,7 @@ def main():
                     avg_psnr_border += crt_psnr
                     N_border += 1
 
-        if subfolder_GT_l:
+        if isGT:
             avg_psnr = (avg_psnr_center + avg_psnr_border) / (N_center + N_border)
             avg_psnr_center = avg_psnr_center / N_center
             avg_psnr_border = 0 if N_border == 0 else avg_psnr_border / N_border
@@ -159,7 +161,7 @@ def main():
             )
 
     logger.info("################ Tidy Outputs ################")
-    if subfolder_GT_l:
+    if isGT:
         for subfolder_name, psnr, psnr_center, psnr_border in zip(
             subfolder_name_l, avg_psnr_l, avg_psnr_center_l, avg_psnr_border_l
         ):
@@ -177,7 +179,7 @@ def main():
     logger.info("Save images: {}".format(save_imgs))
     logger.info("Flip test: {}".format(flip_test))
 
-    if subfolder_GT_l:
+    if isGT:
         logger.info(
             "Total Average PSNR: {:.6f} dB for {} clips. "
             "Center PSNR: {:.6f} dB. Border PSNR: {:.6f} dB.".format(
