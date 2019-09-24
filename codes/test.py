@@ -16,16 +16,31 @@ def main():
     #################
     # configurations
     #################
+    stage = 1
     device = torch.device("cuda")
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     data_mode = "licensePlate_blur_bicubic"
     flip_test = False
-    model_path = "/content/EDVR/experiments/002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k/models/178000_G.pth"
+    model_path = (
+        "/content/EDVR/experiments/"
+        + "002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k"
+        + "/models/178000_G.pth"
+    )
+    nf = 64
     N_in = 5
     predeblur, HR_in = False, False
     back_RBs = 10
 
-    model = EDVR_arch.EDVR(64, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in)
+    if stage == 2:
+        model_path = (
+            "/content/EDVR/experiments/"
+            + "pretrained_models/EDVR_REDS_deblur_Stage2.pth"
+        )
+        nf = 128
+        predeblur, HR_in = True, True
+        back_RBs = 20
+
+    model = EDVR_arch.EDVR(nf, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in)
     test_dataset_folder = "/content/EDVR/datasets/vinhlong_040719_1212"
     GT_dataset_folder = ""
 
@@ -137,6 +152,12 @@ def main():
                 else:  # border frames
                     avg_psnr_border += crt_psnr
                     N_border += 1
+            else:
+                logger.info(
+                    "{:3d} - {:25} is generated".format(
+                        img_idx + 1, img_name
+                    )
+                )
 
         if isGT:
             avg_psnr = (avg_psnr_center + avg_psnr_border) / (N_center + N_border)
