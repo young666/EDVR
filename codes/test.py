@@ -16,7 +16,7 @@ def main():
     #################
     # configurations
     #################
-    stage = 1
+    stage = 2
     device = torch.device("cuda")
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     data_mode = "licensePlate_blur_bicubic"
@@ -30,6 +30,8 @@ def main():
     N_in = 5
     predeblur, HR_in = False, False
     back_RBs = 10
+    test_dataset_folder = "/content/EDVR/datasets/vinhlong_040719_1212"
+    GT_dataset_folder = ""
 
     if stage == 2:
         model_path = (
@@ -39,10 +41,10 @@ def main():
         nf = 128
         predeblur, HR_in = True, True
         back_RBs = 20
+        test_dataset_folder = "/content/EDVR/results/licensePlate_blur_bicubic"
+        GT_dataset_folder = ""
 
     model = EDVR_arch.EDVR(nf, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in)
-    test_dataset_folder = "/content/EDVR/datasets/vinhlong_040719_1212"
-    GT_dataset_folder = ""
 
     #### evaluation
     crop_border = 0
