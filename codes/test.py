@@ -41,7 +41,7 @@ def main():
         nf = 128
         predeblur, HR_in = True, True
         back_RBs = 20
-        test_dataset_folder = "/content/EDVR/results/licensePlate_blur_bicubic"
+        test_dataset_folder = "/content/EDVR/datasets/licensePlate_blur_bicubic"
         GT_dataset_folder = ""
 
     model = EDVR_arch.EDVR(nf, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in)
