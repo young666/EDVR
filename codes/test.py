@@ -2,9 +2,11 @@ import os
 import os.path as osp
 import glob
 import logging
+
 import numpy as np
 import cv2
 import torch
+from torch.utils.tensorboard import SummaryWriter
 
 import utils.util as util
 import utils.test_util as test_util
@@ -19,7 +21,10 @@ def main():
     stage = 1
     device = torch.device("cuda")
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-    iterList = ["50000", "100000", "150000", "178000"]
+    iterList = range(2, int(180 / 2))
+
+    # tensorboard
+    tb_logger = SummaryWriter(log_dir="../tb_logger/" + "licensePlate1")
 
     for iterValue in iterList:
         data_mode = "licensePlate_blur_bicubic_{}".format(iterValue)
@@ -27,14 +32,14 @@ def main():
         model_path = (
             "/content/EDVR/experiments/"
             + "002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k"
-            + "/models/{}_G.pth".format(iterValue)
+            + "/models/{}_G.pth".format(iterValue * 1000)
         )
         nf = 64
         N_in = 5
         predeblur, HR_in = False, False
         back_RBs = 10
-        test_dataset_folder = "/content/EDVR/datasets/vinhlong_040719_1212"
-        GT_dataset_folder = ""
+        test_dataset_folder = "/content/EDVR/datasets/license_plate1"
+        GT_dataset_folder = "/content/EDVR/datasets/license_plate1_BI_x4"
 
         if stage == 2:
             model_path = (
@@ -47,7 +52,9 @@ def main():
             test_dataset_folder = "/content/EDVR/datasets/licensePlate_blur_bicubic"
             GT_dataset_folder = ""
 
-        model = EDVR_arch.EDVR(nf, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in)
+        model = EDVR_arch.EDVR(
+            nf, N_in, 8, 5, back_RBs, predeblur=predeblur, HR_in=HR_in
+        )
 
         #### evaluation
         crop_border = 0
@@ -130,7 +137,9 @@ def main():
                 output = util.tensor2img(output.squeeze(0))
 
                 if save_imgs:
-                    cv2.imwrite(osp.join(save_subfolder, "{}.png".format(img_name)), output)
+                    cv2.imwrite(
+                        osp.join(save_subfolder, "{}.png".format(img_name)), output
+                    )
 
                 if isGT:
                     # calculate PSNR
@@ -159,9 +168,7 @@ def main():
                         N_border += 1
                 else:
                     logger.info(
-                        "{:3d} - {:25} is generated".format(
-                            img_idx + 1, img_name
-                        )
+                        "{:3d} - {:25} is generated".format(img_idx + 1, img_name)
                     )
 
             if isGT:
@@ -215,6 +222,10 @@ def main():
                     sum(avg_psnr_center_l) / len(avg_psnr_center_l),
                     sum(avg_psnr_border_l) / len(avg_psnr_border_l),
                 )
+            )
+
+            tb_logger.add_scalar(
+                "psnr", sum(avg_psnr_l) / len(avg_psnr_l), iterValue * 1000
             )
 
 
