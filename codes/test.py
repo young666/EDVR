@@ -27,7 +27,7 @@ def main():
     tb_logger = SummaryWriter(log_dir="../tb_logger/" + "licensePlate1")
 
     for iterValue in iterList:
-        data_mode = "licensePlate_blur_bicubic_{}".format(iterValue)
+        data_mode = "licensePlate_blur_bicubic_{}".format(iterValue * 1000)
         flip_test = False
         model_path = (
             "/content/EDVR/experiments/"
@@ -38,8 +38,8 @@ def main():
         N_in = 5
         predeblur, HR_in = False, False
         back_RBs = 10
-        test_dataset_folder = "/content/EDVR/datasets/license_plate1"
-        GT_dataset_folder = "/content/EDVR/datasets/license_plate1_BI_x4"
+        test_dataset_folder = "/content/EDVR/datasets/license_plate1_BI_x4"
+        GT_dataset_folder = "/content/EDVR/datasets/license_plate1"
 
         if stage == 2:
             model_path = (
