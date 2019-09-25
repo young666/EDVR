@@ -24,7 +24,7 @@ def main():
     iterList = range(2, int(180 / 2))
 
     # tensorboard
-    tb_logger = SummaryWriter(log_dir="../tb_logger/" + "licensePlate1")
+    tb_logger = SummaryWriter(log_dir="../tb_logger/" + "vinhlong_040719_1212")
 
     for iterValue in iterList:
         data_mode = "licensePlate_blur_bicubic_{}".format(iterValue * 1000)
@@ -38,8 +38,8 @@ def main():
         N_in = 5
         predeblur, HR_in = False, False
         back_RBs = 10
-        test_dataset_folder = "/content/EDVR/datasets/license_plate1_BI_x4"
-        GT_dataset_folder = "/content/EDVR/datasets/license_plate1"
+        test_dataset_folder = "/content/EDVR/datasets/vinhlong_040719_1212_BI_x4"
+        GT_dataset_folder = "/content/EDVR/datasets/vinhlong_040719_1212"
 
         if stage == 2:
             model_path = (
