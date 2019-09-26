@@ -19,7 +19,7 @@ except ImportError:
     pass
 
 logger = logging.getLogger("base")
-imgShape = (3, 128, 128)
+imgShape = (3, 280, 280)
 
 
 class LicensePlateDataset(data.Dataset):
