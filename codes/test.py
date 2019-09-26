@@ -231,7 +231,7 @@ def main():
             tb_logger.add_scalar(
                 "psnr", sum(avg_psnr_l) / len(avg_psnr_l), iterValue * 1000 * 2
             )
-    
+
     tb_logger.close()
 
 
