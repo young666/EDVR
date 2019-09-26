@@ -21,18 +21,18 @@ def main():
     stage = 1
     device = torch.device("cuda")
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-    iterList = range(2, int(180 / 2))
+    iterList = range(1, int(180 / 2))
 
     # tensorboard
     tb_logger = SummaryWriter(log_dir="../tb_logger/" + "vinhlong_040719_1212")
 
     for iterValue in iterList:
-        data_mode = "licensePlate_blur_bicubic_{}".format(iterValue * 1000)
+        data_mode = "licensePlate_blur_bicubic_{}".format(iterValue * 1000 * 2)
         flip_test = False
         model_path = (
             "/content/EDVR/experiments/"
             + "002_EDVR_predeblur_EDVRwoTSAIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k"
-            + "/models/{}_G.pth".format(iterValue * 1000)
+            + "/models/{}_G.pth".format(iterValue * 1000 * 2)
         )
         nf = 64
         N_in = 5
@@ -225,7 +225,7 @@ def main():
             )
 
             tb_logger.add_scalar(
-                "psnr", sum(avg_psnr_l) / len(avg_psnr_l), iterValue * 1000
+                "psnr", sum(avg_psnr_l) / len(avg_psnr_l), iterValue * 1000 * 2
             )
 
 
