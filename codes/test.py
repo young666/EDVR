@@ -130,7 +130,6 @@ def main():
                     .to(device)
                 )
 
-                print(imgs_in.shape)
                 if flip_test:
                     output = test_util.flipx4_forward(model, imgs_in)
                 else:
