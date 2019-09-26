@@ -67,7 +67,11 @@ def main():
             padding = "replicate"
         save_imgs = True
 
+        # Reconfig logger handler
         save_folder = "../results/{}".format(data_mode)
+        # remove all old handlers to avoid duplicate
+        for hdlr in logger.handlers[:]:
+            logger.removeHandler(hdlr)
         util.mkdirs(save_folder)
         util.setup_logger(
             "base", save_folder, "test", level=logging.INFO, screen=True, tofile=True
