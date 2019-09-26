@@ -22,6 +22,7 @@ def main():
     device = torch.device("cuda")
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     iterList = range(1, int(180 / 2))
+    logger = logging.getLogger("base")
 
     # tensorboard
     tb_logger = SummaryWriter(log_dir="../tb_logger/" + "vinhlong_040719_1212")
@@ -71,7 +72,6 @@ def main():
         util.setup_logger(
             "base", save_folder, "test", level=logging.INFO, screen=True, tofile=True
         )
-        logger = logging.getLogger("base")
 
         #### log info
         logger.info("Data: {} - {}".format(data_mode, test_dataset_folder))
