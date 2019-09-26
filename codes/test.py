@@ -141,7 +141,7 @@ def main():
                         osp.join(save_subfolder, "{}.png".format(img_name)), output
                     )
 
-                """ if isGT:
+                if isGT:
                     # calculate PSNR
                     output = output / 255.0
                     GT = np.copy(img_GT_l[img_idx])
@@ -152,11 +152,11 @@ def main():
 
                     output, GT = test_util.crop_border([output, GT], crop_border)
                     crt_psnr = util.calculate_psnr(output * 255, GT * 255)
-                    logger.info(
+                    """ logger.info(
                         "{:3d} - {:25} \tPSNR: {:.6f} dB".format(
                             img_idx + 1, img_name, crt_psnr
                         )
-                    )
+                    ) """
 
                     if (
                         img_idx >= border_frame and img_idx < max_idx - border_frame
@@ -169,7 +169,7 @@ def main():
                 else:
                     logger.info(
                         "{:3d} - {:25} is generated".format(img_idx + 1, img_name)
-                    ) """
+                    )
 
             if isGT:
                 avg_psnr = (avg_psnr_center + avg_psnr_border) / (N_center + N_border)
