@@ -288,11 +288,11 @@ def main():
                     model.save_training_state(epoch, current_step)
                     copy_tree(
                         "/content/EDVR/experiments",
-                        "/content/drive/My Drive/LVTN/SuperResolution/SR_models/EDVR/experiments",
+                        "/content/drive/My Drive/LVTN/SuperResolution/EDVR/experiments",
                     )
                     copy_tree(
                         "/content/EDVR/tb_logger",
-                        "/content/drive/My Drive/LVTN/SuperResolution/SR_models/EDVR/tb_logger",
+                        "/content/drive/My Drive/LVTN/SuperResolution/EDVR/tb_logger",
                     )
 
     if rank <= 0:
