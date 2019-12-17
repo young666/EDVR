@@ -19,7 +19,8 @@ except ImportError:
     pass
 
 logger = logging.getLogger("base")
-imgShape = (3, 280, 280)
+imgShape = (3, 128, 128)
+lrShape = (3, 32, 32)
 
 
 class LicensePlateDataset(data.Dataset):
@@ -56,19 +57,15 @@ class LicensePlateDataset(data.Dataset):
 
         # Check if this is validation dataset
         if isVal:
-            logger.info(
-                "Using cache keys for validating: {}".format(opt["cache_keys"])
-            )
+            logger.info("Using cache keys for validating: {}".format(opt["cache_keys"]))
         else:
-            logger.info(
-                "Using cache keys for training: {}".format(opt["cache_keys"])
-            )
+            logger.info("Using cache keys for training: {}".format(opt["cache_keys"]))
 
-        cache_keys = opt["cache_keys"]
+        cache_keys_path = opt["cache_keys"]
 
-        if cache_keys:
-            logger.info("Using cache keys - {}.".format(cache_keys))
-            self.paths_GT = pickle.load(open("./data/{}".format(cache_keys), "rb"))
+        if cache_keys_path:
+            logger.info("Using cache keys - {}.".format(cache_keys_path))
+            self.paths_GT = pickle.load(open(cache_keys_path, "rb"))
         # remove the REDS4 for testing
         #         self.paths_GT = [
         #             v
@@ -209,8 +206,8 @@ class LicensePlateDataset(data.Dataset):
             )
 
         #### get LQ images
-        # LQ_size_tuple = (3, 70, 70) if self.LR_input else (3, 280, 280)
-        LQ_size_tuple = (3, 70, 70)
+        # LQ_size_tuple = (3, 32, 32) if self.LR_input else (3, 128, 128)
+        LQ_size_tuple = lrShape
         img_LQ_l = []
         for v in neighbor_list:
             img_LQ_path = osp.join(self.LQ_root, name_a, "{:06d}.png".format(v))
@@ -224,13 +221,11 @@ class LicensePlateDataset(data.Dataset):
                 img_LQ = img_LQ.astype(np.float32) / 255.0
             elif self.data_type == "lmdb":
                 # Log info if the size is not matched
-                if LQ_size_tuple != (3, 70, 70):
+                if LQ_size_tuple != lrShape:
                     print(LQ_size_tuple, name_a, v)
 
                 img_LQ = util.read_img(
-                    self.LQ_env,
-                    "{}_{:06d}".format(name_a, v),
-                    LQ_size_tuple,
+                    self.LQ_env, "{}_{:06d}".format(name_a, v), LQ_size_tuple
                 )
             else:
                 img_LQ = util.read_img(None, img_LQ_path)

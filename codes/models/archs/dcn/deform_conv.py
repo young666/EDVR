@@ -486,4 +486,3 @@ class ModulatedDeformConvPack(ModulatedDeformConv):
             self.groups,
             self.deformable_groups,
         )
-
