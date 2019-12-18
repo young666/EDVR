@@ -152,7 +152,7 @@ class VideoSRBaseModel(BaseModel):
 
         print(
             var_L_center.size(),
-            self.var_L_center.expand(-1, N, -1, -1, -1).size(),
+            var_L_center.expand(-1, N, -1, -1, -1).size(),
             self.var_L.size(),
         )
 
