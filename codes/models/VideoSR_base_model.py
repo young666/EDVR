@@ -146,9 +146,15 @@ class VideoSRBaseModel(BaseModel):
 
         _, N, _, _, _ = self.var_L.size()  # N video frames
         center = N // 2
-        var_L_center = self.var_L[:, self.center, :, :, :].contiguous()
-        l_aligned = 1 / (2 * N) * self.cri_aligned(self.var_L, np.stack())
-        l_total += l_aligned
+        var_L_center = self.var_L[:, center, :, :, :].contiguous()
+        # l_aligned = 1 / (2 * N) * self.cri_aligned(self.var_L, np.stack())
+        # l_total += l_aligned
+
+        print(
+            var_L_center.size(),
+            self.var_L_center.expand(-1, N, -1, -1, -1).size(),
+            self.var_L.size(),
+        )
 
         l_total.backward()
 
