@@ -49,6 +49,11 @@ class VideoSRBaseModel(BaseModel):
                 raise NotImplementedError(
                     "Loss type [{:s}] is not recognized.".format(loss_type)
                 )
+            self.cri_aligned = (
+                nn.L1Loss(reduction="sum").to(self.device)
+                if train_opt["cri_aligned"]
+                else None
+            )
             self.l_pix_w = train_opt["pixel_weight"]
 
             #### optimizers
@@ -134,8 +139,19 @@ class VideoSRBaseModel(BaseModel):
         self.optimizer_G.zero_grad()
         self.fake_H = self.netG(self.var_L)
 
+        l_total = 0
+
         l_pix = self.l_pix_w * self.cri_pix(self.fake_H, self.real_H)
-        l_pix.backward()
+        l_total += l_pix
+
+        _, N, _, _, _ = self.var_L.size()  # N video frames
+        center = N // 2
+        var_L_center = self.var_L[:, self.center, :, :, :].contiguous()
+        l_aligned = 1 / (2 * N) * self.cri_aligned(self.var_L, np.stack())
+        l_total += l_aligned
+
+        l_total.backward()
+
         self.optimizer_G.step()
 
         # set log
