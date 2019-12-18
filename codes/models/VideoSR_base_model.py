@@ -136,6 +136,8 @@ class VideoSRBaseModel(BaseModel):
         if self.opt["train"]["ft_tsa_only"] and step < self.opt["train"]["ft_tsa_only"]:
             self.set_params_lr_zero()
 
+        train_opt = self.opt["train"]
+
         self.optimizer_G.zero_grad()
         self.fake_H = self.netG(self.var_L)
 
@@ -154,7 +156,7 @@ class VideoSRBaseModel(BaseModel):
         var_L_stacked_center = torch.transpose(var_L_center_repeated, 0, 1)
         l_aligned = (
             1 / (N - 1) * self.cri_aligned(self.var_L, var_L_stacked_center)
-            if self.train_opt["aligned_criterion"]
+            if train_opt["aligned_criterion"]
             else 0
         )
         l_total += l_aligned
@@ -165,7 +167,7 @@ class VideoSRBaseModel(BaseModel):
 
         # set log
         self.log_dict["l_pix"] = l_pix.item()
-        if self.train_opt["aligned_criterion"]:
+        if train_opt["aligned_criterion"]:
             self.log_dict["l_aligned"] = l_aligned.item()
             self.log_dict["l_total"] = l_total.item()
 
