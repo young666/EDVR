@@ -152,7 +152,11 @@ class VideoSRBaseModel(BaseModel):
         var_L_center_expanded = var_L_center.expand(1, -1, -1, -1, -1)
         var_L_center_repeated = var_L_center_expanded.repeat(N, 1, 1, 1, 1)
         var_L_stacked_center = torch.transpose(var_L_center_repeated, 0, 1)
-        l_aligned = 1 / (N - 1) * self.cri_aligned(self.var_L, var_L_stacked_center)
+        l_aligned = (
+            1 / (N - 1) * self.cri_aligned(self.var_L, var_L_stacked_center)
+            if self.train_opt["cri_aligned"]
+            else 0
+        )
         l_total += l_aligned
 
         l_total.backward()
@@ -161,8 +165,9 @@ class VideoSRBaseModel(BaseModel):
 
         # set log
         self.log_dict["l_pix"] = l_pix.item()
-        self.log_dict["l_aligned"] = l_aligned.item()
-        self.log_dict["l_total"] = l_total.item()
+        if self.train_opt["cri_aligned"]:
+            self.log_dict["l_aligned"] = l_aligned.item()
+            self.log_dict["l_total"] = l_total.item()
 
     def test(self):
         self.netG.eval()
