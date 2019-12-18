@@ -51,7 +51,7 @@ class VideoSRBaseModel(BaseModel):
                 )
             self.cri_aligned = (
                 nn.L1Loss(reduction="sum").to(self.device)
-                if train_opt["cri_aligned"]
+                if train_opt["aligned_criterion"]
                 else None
             )
             self.l_pix_w = train_opt["pixel_weight"]
@@ -154,7 +154,7 @@ class VideoSRBaseModel(BaseModel):
         var_L_stacked_center = torch.transpose(var_L_center_repeated, 0, 1)
         l_aligned = (
             1 / (N - 1) * self.cri_aligned(self.var_L, var_L_stacked_center)
-            if self.train_opt["cri_aligned"]
+            if self.train_opt["aligned_criterion"]
             else 0
         )
         l_total += l_aligned
@@ -165,7 +165,7 @@ class VideoSRBaseModel(BaseModel):
 
         # set log
         self.log_dict["l_pix"] = l_pix.item()
-        if self.train_opt["cri_aligned"]:
+        if self.train_opt["aligned_criterion"]:
             self.log_dict["l_aligned"] = l_aligned.item()
             self.log_dict["l_total"] = l_total.item()
 
