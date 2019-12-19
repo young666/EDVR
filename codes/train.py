@@ -286,14 +286,6 @@ def main():
                     logger.info("Saving models and training states.")
                     model.save(current_step)
                     model.save_training_state(epoch, current_step)
-                    copy_tree(
-                        "/content/EDVR/experiments",
-                        "/content/drive/My Drive/LVTN/SuperResolution/EDVR/experiments",
-                    )
-                    copy_tree(
-                        "/content/EDVR/tb_logger",
-                        "/content/drive/My Drive/LVTN/SuperResolution/EDVR/tb_logger",
-                    )
 
     if rank <= 0:
         logger.info("Saving the final model.")
