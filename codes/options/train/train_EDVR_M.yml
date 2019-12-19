@@ -54,7 +54,7 @@ network_G:
 
 #### path
 path:
-  pretrain_model_G: /content/EDVRaligned/experiments/pretrained_models/EDVR_REDS_SR_M.pth
+  pretrain_model_G: /content/EDVR/experiments/pretrained_models/EDVR_REDS_SR_M.pth
   strict_load: false
   resume_state: null
 
