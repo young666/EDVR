@@ -165,7 +165,10 @@ class VideoSRBaseModel(BaseModel):
         var_L_stacked_center = torch.transpose(var_L_center_repeated, 0, 1)
 
         # Assign center frame to center aligned feature
-        aligned_img = fea2imgConv(aligned_fea.view(-1, nf, H, W)).view(B, N, -1, H, W)
+        with torch.no_grad():
+            aligned_img = fea2imgConv(aligned_fea.view(-1, nf, H, W)).view(
+                B, N, -1, H, W
+            )
         aligned_img[:, center, :, :, :] = var_L_center
 
         l_aligned = (
