@@ -153,6 +153,7 @@ class VideoSRBaseModel(BaseModel):
         center = N // 2
         nf = opt_net["nf"]
         fea2imgConv = nn.Conv2d(nf, 3, 3, 1, 1)
+        fea2imgConv.eval()
         # Fix bug: Input type and weight type should be the same
         # Feature is cuda(), so the model must be cuda()
         fea2imgConv.cuda()
