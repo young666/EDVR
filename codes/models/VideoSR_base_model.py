@@ -157,10 +157,7 @@ class VideoSRBaseModel(BaseModel):
         var_L_center_repeated = var_L_center_expanded.repeat(N, 1, 1, 1, 1)
         var_L_stacked_center = torch.transpose(var_L_center_repeated, 0, 1)
         # Assign center frame to center aligned feature
-        print(
-            aligned_fea.shape,
-            aligned_fea.view(16, 5, 3, 32, 32)[:, center, :, :, :].shape,
-        )
+        print(aligned_fea.shape)
         aligned_fea[:, center, :, :, :] = var_L_center
 
         l_aligned = (
