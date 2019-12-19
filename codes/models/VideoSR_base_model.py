@@ -137,6 +137,7 @@ class VideoSRBaseModel(BaseModel):
             self.set_params_lr_zero()
 
         train_opt = self.opt["train"]
+        opt_net = self.opt["network_G"]
 
         self.optimizer_G.zero_grad()
         self.fake_H, aligned_fea = self.netG(self.var_L)
@@ -148,20 +149,23 @@ class VideoSRBaseModel(BaseModel):
         l_total += l_pix
 
         # Aligned loss
-        _, N, _, _, _ = self.var_L.size()  # N video frames, [B, N, C, H, W]
+        B, N, C, H, W = self.var_L.size()  # N video frames
         center = N // 2
+        nf = opt_net["nf"]
+        fea2imgConv = nn.Conv2d(nf, 3, 3, 1, 1)
 
         # Stack N of center LR images
         var_L_center = self.var_L[:, center, :, :, :].contiguous()
         var_L_center_expanded = var_L_center.expand(1, -1, -1, -1, -1)
         var_L_center_repeated = var_L_center_expanded.repeat(N, 1, 1, 1, 1)
         var_L_stacked_center = torch.transpose(var_L_center_repeated, 0, 1)
+
         # Assign center frame to center aligned feature
-        print(aligned_fea.shape)
-        aligned_fea[:, center, :, :, :] = var_L_center
+        aligned_img = fea2imgConv(aligned_fea.view(-1, nf, H, W)).view(B, N, -1, H, W)
+        aligned_img[:, center, :, :, :] = var_L_center
 
         l_aligned = (
-            1 / (N - 1) * self.cri_aligned(aligned_fea, var_L_stacked_center)
+            1 / (N - 1) * self.cri_aligned(aligned_img, var_L_stacked_center)
             if train_opt["aligned_criterion"]
             else 0
         )
