@@ -56,7 +56,7 @@ network_G:
 path:
   pretrain_model_G: /content/EDVR/experiments/pretrained_models/EDVR_REDS_SR_M.pth
   strict_load: false
-  resume_state: /content/EDVR/experiments/002_EDVR_EDVRIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k/training_state/94000.state
+  resume_state: /content/EDVR/experiments/002_EDVR_EDVRIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k/training_state/102000.state
 
 #### training settings: learning rate scheme, loss
 train:
