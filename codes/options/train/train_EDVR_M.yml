@@ -1,5 +1,5 @@
 #### general settings
-name: 002_EDVR_EDVRIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k
+name: 002_EDVR_EDVRIni_lr4e-4_600k_Face_LrCAR4S_fixTSA50k
 use_tb_logger: true
 model: VideoSR_base
 distortion: sr
@@ -9,34 +9,34 @@ gpu_ids: [0]
 #### datasets
 datasets:
   train:
-    name: licensePlate
-    mode: licensePlate
+    name: face
+    mode: face
     interval_list: [1]
     random_reverse: false
     border_mode: false
-    dataroot_GT: /workspace/taily/workspace/video_sr/EDVR/datasets/license_plate_0_5_withGT.lmdb
-    dataroot_LQ: /workspace/taily/workspace/video_sr/EDVR/datasets/license_plate_0_5_withGT_BI_x4.lmdb
-    cache_keys: /workspace/taily/workspace/video_sr/EDVR/datasets/license_plate_0_5_withGT.lmdb/license_plate_0_5_withGT_val_keys.pkl
+    dataroot_GT: /workspace/taily/workspace/video_sr/EDVR/datasets/youtubeFaces.lmdb
+    dataroot_LQ: /workspace/taily/workspace/video_sr/EDVR/datasets/youtubeFaces_BI_x4.lmdb
+    cache_keys: /workspace/taily/workspace/video_sr/EDVR/datasets/youtubeFaces.lmdb/youtubeFaces_val_keys.pkl
 
     N_frames: 5
     use_shuffle: true
     n_workers: 4 # per GPU
     batch_size: 16
-    GT_size: 128
-    LQ_size: 32
+    GT_size: 256
+    LQ_size: 64
     use_flip: true
     use_rot: true
     color: RGB
 
   val:
-    name: licensePlate
-    mode: licensePlate
+    name: face
+    mode: face
     interval_list: [1]
     random_reverse: false
     border_mode: false
     dataroot_GT: null
     dataroot_LQ: null
-    cache_keys: LicensePlate1_val_keys.pkl
+    cache_keys: /workspace/taily/workspace/video_sr/EDVR/datasets/youtubeFaces.lmdb/youtubeFaces_val_keys.pkl
 
     N_frames: 5
 
@@ -56,7 +56,7 @@ network_G:
 path:
   pretrain_model_G: /workspace/taily/workspace/video_sr/EDVR/experiments/pretrained_models/EDVR_REDS_SR_M.pth
   strict_load: false
-  resume_state: /workspace/taily/workspace/video_sr/EDVR/experiments/002_EDVR_EDVRIni_lr4e-4_600k_LicensePlate_LrCAR4S_fixTSA50k/training_state/95000.state
+  resume_state: null
 
 #### training settings: learning rate scheme, loss
 train:
@@ -72,7 +72,7 @@ train:
   restart_weights: [1, 1, 1, 1]
   eta_min: !!float 1e-7
 
-  aligned_criterion: true
+  aligned_criterion: false
   pixel_criterion: cb
   pixel_weight: 1.0
   val_freq: !!float 1e3

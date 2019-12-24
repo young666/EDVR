@@ -3,7 +3,7 @@ import math
 import argparse
 import random
 import logging
-from distutils.dir_util import copy_tree
+# from distutils.dir_util import copy_tree
 
 import torch
 import torch.distributed as dist
