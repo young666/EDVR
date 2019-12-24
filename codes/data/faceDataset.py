@@ -138,10 +138,11 @@ class FaceDataset(data.Dataset):
         GT_size = self.opt["GT_size"]
         key = self.paths_GT[index]
         # key = 100_Alejandro_Gonzalez_Inarritu_2_aligned_detect_2.104
-        maxIndex, name = key.split("_", 1)
+        minIndex, maxIndex, name = key.split("_", 2)
 
         # Restore the origin key to match file name
         key = name
+        minIndex = int(minIndex)
         maxIndex = int(maxIndex)
         # name.split('.') = [100_Alejandro_Gonzalez_Inarritu_2_aligned_detect_2, 104]
         name_a, name_b = name.split('.')
@@ -179,9 +180,9 @@ class FaceDataset(data.Dataset):
         else:
             # ensure not exceeding the borders
             while (
-                center_frame_idx + self.half_N_frames * interval > maxIndex
-            ) or (center_frame_idx - self.half_N_frames * interval < 1):
-                center_frame_idx = random.randint(1, maxIndex)
+                (center_frame_idx + self.half_N_frames * interval) > maxIndex
+            ) or ((center_frame_idx - self.half_N_frames * interval) < minIndex):
+                center_frame_idx = random.randint(minIndex, maxIndex)
             # get the neighbor list
             neighbor_list = list(
                 range(
