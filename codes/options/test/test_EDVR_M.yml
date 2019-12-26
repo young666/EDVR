@@ -14,16 +14,16 @@ datasets:
     interval_list: [1]
     random_reverse: false
     border_mode: false
-    dataroot_GT: ~
-    dataroot_LQ: /content/EDVR/datasets/vinhlong_040719_1212
+    dataroot_GT: /content/EDVR/datasets/license_plate5/GT
+    dataroot_LQ: /content/EDVR/datasets/license_plate5/BI_x4
     cache_keys: ~
 
     N_frames: 5
     use_shuffle: true
     n_workers: 4 # per GPU
     batch_size: 16
-    GT_size: 256
-    LQ_size: 64
+    GT_size: 128
+    LQ_size: 32
     use_flip: true
     use_rot: true
     color: RGB
@@ -35,7 +35,7 @@ datasets:
     random_reverse: false
     border_mode: false
     dataroot_GT: ~
-    dataroot_LQ: /content/EDVR/datasets/vinhlong_040719_1212
+    dataroot_LQ: ~
     cache_keys: ~
 
     N_frames: 5
@@ -54,7 +54,7 @@ network_G:
 
 #### path
 path:
-  pretrain_model_G: /content/EDVR/experiments/pretrained_models/EDVR_REDS_SR_M.pth
+  pretrain_model_G: /content/EDVR/EDVRstock.pth
   strict_load: false
   resume_state: ~
 
